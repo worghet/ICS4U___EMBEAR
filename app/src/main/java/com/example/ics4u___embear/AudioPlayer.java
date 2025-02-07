@@ -2,6 +2,10 @@ package com.example.ics4u___embear;
 
 public class AudioPlayer {
 
+    // constants
+    final public int NEXT = 0;
+    final public int PREV = 1;
+
     // fields
     private Audio audioPlaying;
     private long timeProgress;
@@ -27,8 +31,18 @@ public class AudioPlayer {
     // custom methods
 
     // "play THIS song"
-    public void initializeAudioPlaying(Audio audio) {
-        // start playing this audio file
+    public void playSong(int desiredSong) {
+        if (desiredSong == NEXT) {
+            // get next song in queue and put it into "PlaySong"
+        }
+        else if (desiredSong == PREV) {
+            // get prev song in queue and put it into "PlaySong"
+        }
+
+    }
+
+    public void playSong(Audio audio) {
+
     }
 
     public void togglePlaying() {
@@ -42,7 +56,11 @@ public class AudioPlayer {
     }
 
     public void generateShuffleQueue() {
+        // creates an
+    }
 
+    public void setNextInQueue(Audio audio) {
+        //
     }
 
     // sum static thing for formatting

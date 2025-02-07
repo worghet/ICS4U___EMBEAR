@@ -12,6 +12,7 @@ public class Playlist {
     private String name;
     private long totalPlaytime;
     // private image icon
+    // queue
 
     // methods (getters and setters)
     public int getNumSongs() {

@@ -10,6 +10,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    AudioPlayer audioPlayer;
+    FileManager fileManager;
+    Playlist[] allPlaylists;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,4 +26,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
+
+    public void toggleAudio() {
+
+    }
+
+    public void setAudioPlaying(int nextOrPrev) {
+
+    }
+
 }
