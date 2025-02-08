@@ -1,6 +1,12 @@
 package com.example.ics4u___embear;
 
-public class AudioPlayer {
+
+import android.media.MediaPlayer;
+
+import java.io.IOException;
+
+// extends mediaplayer?
+public class AudioPlayer extends MediaPlayer{
 
     // constants
     final public int NEXT = 0;
@@ -9,6 +15,11 @@ public class AudioPlayer {
     // fields
     private Audio audioPlaying;
     private long timeProgress;
+
+
+    public AudioPlayer() {
+    }
+
 
 
     // methods (getters / setters)
@@ -41,7 +52,7 @@ public class AudioPlayer {
 
     }
 
-    public void playSong(Audio audio) {
+    public void playSong(Audio audio) throws IOException {
 
     }
 

@@ -1,26 +1,34 @@
 package com.example.ics4u___embear;
 
+import java.util.ArrayList;
+
 // data object
 public class Playlist {
-
+// extend serializable
     // constants
     final static int PROCEDURE_DELETE = 0;
     final static int PROCEDURE_ADD = 1;
 
     // fields
-    private int numSongs;
+//    private int numSongs;
     private String name;
-    private long totalPlaytime;
+//    private long totalPlaytime;
+    private ArrayList<Audio> audioList;
     // private image icon
     // queue
+//    Gson
 
-    // methods (getters and setters)
-    public int getNumSongs() {
-        return numSongs;
+    // constructor
+    public Playlist(String playlistName) {
+        audioList = new ArrayList<>();
+        name = playlistName;
     }
 
-    public void setNumSongs(int numSongs) {
-        this.numSongs = numSongs;
+
+
+    // methods (getters and setters)
+    public int getNumAudio() {
+        return audioList.size();
     }
 
     public String getName() {
@@ -32,11 +40,11 @@ public class Playlist {
     }
 
     public long getTotalPlaytime() {
-        return totalPlaytime;
+        return 0;
     }
 
-    public void setTotalPlaytime(long totalPlaytime) {
-        this.totalPlaytime = totalPlaytime;
+    public ArrayList<Audio> getAudioList() {
+        return audioList;
     }
 
     // custom
@@ -47,7 +55,18 @@ public class Playlist {
 
     // replace with 2 dif methods?             just string?
     public void modifyPlaylist(int procedure, Audio audio) {
-
+        if (procedure == PROCEDURE_ADD) {
+            // check that not exists already?
+            audioList.add(audio);
+        }
+        // if delete ...
     }
 
+    public long calculatePlaylistLengthMillis() {
+        return 100000;
+    }
+
+    public int howManyAudio() {
+        return 0;
+    }
 }

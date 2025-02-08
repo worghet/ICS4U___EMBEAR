@@ -1,6 +1,6 @@
 package com.example.ics4u___embear;
 
-// data object
+// data object - RENAME TO TRACK?
 public class Audio {
 
     // fields
@@ -10,6 +10,13 @@ public class Audio {
     // private image icon
 
     // methods (just getters / setters)
+//    public Audio(String filePath) {
+//        this.filePath = filePath;
+//    }
+
+    public Audio(String name) {
+        this.name = name;
+    }
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
@@ -45,5 +52,6 @@ public class Audio {
     }
 
     // static intent to audio file converter here
+
 
 }
