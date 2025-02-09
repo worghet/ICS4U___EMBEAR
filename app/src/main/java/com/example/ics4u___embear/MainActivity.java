@@ -18,8 +18,8 @@ import androidx.core.view.WindowCompat;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
-//
-    AudioPlayer audioPlayer;
+// make into singleton too?
+
     FileManager fileManager;
     TextView jsonOutput; // CANNOT INITIALIZE BEFORE ONCREATE!!!!!!!
     PlayData playData;

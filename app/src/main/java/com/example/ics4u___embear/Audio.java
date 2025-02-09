@@ -1,5 +1,7 @@
 package com.example.ics4u___embear;
 
+import android.net.Uri;
+
 // data object - RENAME TO TRACK?
 public class Audio {
 
@@ -7,6 +9,7 @@ public class Audio {
     private long lengthTime;
     private String name, artist;
     private String filePath;
+//    private Uri uri;
     // private image icon
 
     // methods (just getters / setters)
@@ -22,6 +25,12 @@ public class Audio {
     public Audio(String name) {
         this.name = name;
     }
+
+//    public Uri getUri() {
+//        return uri;
+//    }
+//
+//    public void setUri;
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;

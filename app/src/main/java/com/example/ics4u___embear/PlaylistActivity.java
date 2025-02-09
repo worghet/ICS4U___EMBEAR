@@ -2,15 +2,20 @@ package com.example.ics4u___embear;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -40,12 +45,24 @@ public class PlaylistActivity extends AppCompatActivity {
         LinearLayout audioContainer = findViewById(R.id.audioContainerLayout);
         audioContainer.removeAllViews();
 
-        for (Audio audio : audioList) {
-            Button button = new Button(this);
-            button.setText(audio.getName());
+        for (int audioIndex = 0; audioIndex < playlist.getNumAudio(); audioIndex++) {
+            Button audioButton = new Button(this);
+            audioButton.setText(playlist.getAudioList().get(audioIndex).getName());
             // Add click listener if needed to play the audio
-            audioContainer.addView(button);
+
+            audioButton.setOnClickListener(view -> {
+
+            });
+
+            audioContainer.addView(audioButton);
         }
+    }
+
+    public void goToFullscreenAudio(View view) {
+        Intent intent = new Intent(this, AudioActivity.class);
+        intent.putExtra("PLAYLIST_INDEX", getIntent().getIntExtra("PLAYLIST_INDEX", 0));
+//        intent.putExtra("AUDIO_INDEX", playlist.getAudioList().indexOf());
+        startActivity(intent);
     }
 
     public void addSongToPlaylist(View view) {
@@ -88,6 +105,68 @@ public class PlaylistActivity extends AppCompatActivity {
             return fileName;
         }
         return "Unknown File";
+    }
+
+    public void renamePlaylist(View view) {
+
+        Log.d("PlaylistActivity", "Rename was pressed!");
+
+        // edit text is an input getter
+        EditText inputLine = new EditText(this); // created in This activity
+        inputLine.setHint("NEW PLAYLIST NAME:"); // sets what should be entered
+
+        // formatting
+        // TODO import own colors, try to make rounded stuff
+        inputLine.setPadding(70, 0, 0, 30);
+//        inputLine.setBackgroundColor(); // can use images as background. ex Color.BLACK
+        // setTextSize,
+
+        // alert dialogue is the actual UI popup
+        AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this); // again, to create in this activity
+
+        popupBuilder.setTitle("PLAYLIST RENAMING");
+        popupBuilder.setMessage("PLEASE ENTER THE DESIRED NAME:");
+        popupBuilder.setView(inputLine);
+
+        // add buttons and what to do when theyre pressed
+
+
+        // TODO DISABLE BUTTON UNTIL POSSIBLE (USE LISTENER)
+        popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
+
+            // collect new name
+            String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
+            // can do error checking here: not empty, not already in playdata
+
+            if (!newPlaylistName.isEmpty()) {
+                playlist.setName(newPlaylistName);
+                loadPlaylistData();
+                // TODO re render playlist buttons
+            }
+            else {
+                Toast errorPopup = new Toast(this);
+                errorPopup.setText("FAILED TO RENAME: EMPTY NAME GIVEN");
+                errorPopup.show();
+            }
+        }));
+
+        // when cancel is pressed
+        popupBuilder.setNegativeButton("CANCEL", null);
+
+
+        AlertDialog popup = popupBuilder.create();
+
+
+        // show it (theres a method in builder too which just creates in it
+        popup.show();
+
+        // modifications to popup must occur after it is shown
+        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
+        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(Color.BLACK);
+//        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setRa
+        popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
+
+
     }
 
     public void goBack(View view) {
