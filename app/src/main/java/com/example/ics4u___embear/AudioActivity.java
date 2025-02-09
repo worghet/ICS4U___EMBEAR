@@ -1,9 +1,6 @@
 package com.example.ics4u___embear;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,10 +10,8 @@ import java.io.IOException;
 
 public class AudioActivity extends AppCompatActivity {
 
-    TextView audioNameBox, onOffBox;
+    TextView audioNameBox, onOffBox, totalTimeBox, durationBox;
     AudioPlayer audioPlayer;
-    Audio audio;
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +34,17 @@ public class AudioActivity extends AppCompatActivity {
     private void renderAudioData() throws IOException {
         audioNameBox = findViewById(R.id.audioName);
         onOffBox = findViewById(R.id.playingStatus);
-        audio = PlayData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0)).getAudioList().get(getIntent().getIntExtra("AUDIO_INDEX", 0));
-        audioNameBox.setText(audio.getName());
-        audioPlayer = new AudioPlayer();
+        totalTimeBox = findViewById(R.id.totalTime);
+        audioPlayer = AudioPlayer.getAudioPlayer();
+        audioNameBox.setText(getIntent().getStringExtra("AUDIO_NAME"));
+        totalTimeBox.setText(Audio.millisecondsToSeconds(getIntent().getLongExtra("AUDIO_LENGTH", 0)));
     }
 
     public void togglePlaying(View view) throws IOException {
-//        audioPlayer.togglePlaying();
+        audioPlayer.togglePlaying();
 //        onOffBox.setText(audioPlayer.isPlaying());
 
-        onOffBox.setText("PLAYING!");
+        onOffBox.setText("TOGGLED!");
 
 
     }

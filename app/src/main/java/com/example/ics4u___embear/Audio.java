@@ -1,71 +1,71 @@
 package com.example.ics4u___embear;
 
+import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 
-// data object - RENAME TO TRACK?
+import java.io.IOException;
+
+// Data object for Audio (can rename to Track if preferred)
 public class Audio {
 
-    // fields
-    private long lengthTime;
+    // Fields
+    private long lengthTime; // Duration in milliseconds
     private String name, artist;
     private String filePath;
-//    private Uri uri;
-    // private image icon
+    private MediaMetadataRetriever metadataRetriever= new MediaMetadataRetriever();
 
-    // methods (just getters / setters)
-//    public Audio(String filePath) {
-//        this.filePath = filePath;
-//    }
-
+    // Constructor
     public Audio(String name, String filePath) {
         this.name = name;
         this.filePath = filePath;
+//        metadataRetriever.setDataSource(filePath);
     }
+
 
     public Audio(String name) {
         this.name = name;
     }
 
-//    public Uri getUri() {
-//        return uri;
-//    }
-//
-//    public void setUri;
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
+    // Getters and Setters
     public String getFilePath() {
         return filePath;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+//        this.lengthTime = getAudioDuration(Uri.parse(filePath)); // Update duration if file path changes
     }
 
     public String getName() {
         return name;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getArtist() {
         return artist;
     }
 
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
     public long getLengthTime() {
         return lengthTime;
     }
 
-    public void setLengthTime(long lengthTime) {
-        this.lengthTime = lengthTime;
+    // MM:SS
+    static public String millisecondsToSeconds(long milliseconds) {
+        int minutes, seconds;
+
+        seconds = (int) milliseconds / 1000;
+        minutes = seconds / 60;
+        seconds %= 60;
+
+        return (minutes + ":" + seconds);
     }
-
-    // static intent to audio file converter here
-
-
 }

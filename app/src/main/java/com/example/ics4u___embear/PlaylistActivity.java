@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class PlaylistActivity extends AppCompatActivity {
@@ -50,8 +51,15 @@ public class PlaylistActivity extends AppCompatActivity {
             audioButton.setText(playlist.getAudioList().get(audioIndex).getName());
             // Add click listener if needed to play the audio
 
+            int finalAudioIndex = audioIndex;
             audioButton.setOnClickListener(view -> {
-
+                try {
+                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getAudioList().get(finalAudioIndex));
+                    TextView lenSelected = findViewById(R.id.metadata);
+//                    lenSelected.setText(playlist.getAudioList().get(finalAudioIndex));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
 
             audioContainer.addView(audioButton);
@@ -59,16 +67,19 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void goToFullscreenAudio(View view) {
-        Intent intent = new Intent(this, AudioActivity.class);
-        intent.putExtra("PLAYLIST_INDEX", getIntent().getIntExtra("PLAYLIST_INDEX", 0));
-//        intent.putExtra("AUDIO_INDEX", playlist.getAudioList().indexOf());
-        startActivity(intent);
+        if (AudioPlayer.getAudioPlayer().isPlaying().equals("ON")) {
+            Intent intent = new Intent(this, AudioActivity.class);
+            intent.putExtra("AUDIO_NAME", AudioPlayer.getAudioPlayer().getAudioPlaying().getName());
+            intent.putExtra("AUDIO_LENGTH", AudioPlayer.getAudioPlayer().getAudioPlaying().getLengthTime());
+            startActivity(intent);
+        }
     }
 
     public void addSongToPlaylist(View view) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("audio/*"); // Only show audio files
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // Allow multiple file selection
         startActivityForResult(intent, REQUEST_AUDIO_PICK);
     }
 
@@ -77,19 +88,37 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_AUDIO_PICK && resultCode == RESULT_OK && data != null) {
-            Uri audioUri = data.getData(); // Get the selected file URI
+            // Check if multiple files were selected
+            if (data.getClipData() != null) {
+                // Multiple files selected
+                int count = data.getClipData().getItemCount();
+                for (int i = 0; i < count; i++) {
+                    Uri audioUri = data.getClipData().getItemAt(i).getUri(); // Get each URI
 
-            // Persist permission to access the file later
-            getContentResolver().takePersistableUriPermission(audioUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    // Persist permission to access the file
+                    getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            // Extract file name from URI
-            String fileName = getFileNameFromUri(audioUri);
+                    // Extract file name from URI
+                    String fileName = getFileNameFromUri(audioUri);
 
-            // Create Audio object and add to playlist
-            Log.d("PlaylistActivity", "about to add audio");
-            Audio audioToAdd = new Audio(fileName, audioUri.toString());
-            playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, audioToAdd);
+                    // Create Audio object and add to playlist
+                    Audio audioToAdd = new Audio(fileName, audioUri.toString());
+                    playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, audioToAdd);
+                }
+            } else if (data.getData() != null) {
+                // Single file selected
+                Uri audioUri = data.getData(); // Get the selected file URI
+
+                // Persist permission to access the file
+                getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                // Extract file name from URI
+                String fileName = getFileNameFromUri(audioUri);
+
+                // Create Audio object and add to playlist
+                Audio audioToAdd = new Audio(fileName, audioUri.toString());
+                playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, audioToAdd);
+            }
 
             // Refresh UI
             loadPlaylistData();

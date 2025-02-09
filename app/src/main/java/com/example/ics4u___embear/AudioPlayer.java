@@ -4,6 +4,7 @@ package com.example.ics4u___embear;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import java.io.IOException;
 
@@ -16,12 +17,13 @@ public class AudioPlayer {
 
     // fields
 
+    private static AudioPlayer audioPlayer = new AudioPlayer();
     private Audio audioPlaying;
-    private long timeProgress;
+    private int timeProgress;
     private MediaPlayer mediaPlayer;
     private boolean isPlaying;
 
-    public AudioPlayer() {
+    private AudioPlayer() {
         isPlaying = false;
         mediaPlayer = new MediaPlayer();
         timeProgress = 0;
@@ -30,9 +32,9 @@ public class AudioPlayer {
 
 
     // methods (getters / setters)
-//    public AudioPlayer getAudioPlayer() {
-//        return audioPlayer;
-//    }
+    public static AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
 
     public Audio getAudioPlaying() {
         return audioPlaying;
@@ -46,7 +48,7 @@ public class AudioPlayer {
         return timeProgress;
     }
 
-    public void setTimeProgress(long timeProgress) {
+    public void setTimeProgress(int timeProgress) {
         this.timeProgress = timeProgress;
     }
 
@@ -71,6 +73,10 @@ public class AudioPlayer {
 
     }
 
+    public MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
     public void playAudio(Context context, Audio audio) throws IOException {
         if (isPlaying) {
             togglePlaying();
@@ -78,22 +84,25 @@ public class AudioPlayer {
 
         mediaPlayer.reset();  // Reset the MediaPlayer to clear the previous state
 
+        audioPlaying = audio;
         mediaPlayer.setDataSource(context, Uri.parse(audio.getFilePath()));  // Set the new audio source
 
         mediaPlayer.prepare();  // Prepare the MediaPlayer to start playing
         mediaPlayer.start();  // Start playing the audio
-//        togglePlaying();
+        isPlaying = true;
     }
 
     // pause / resume
     public void togglePlaying() {
         if (isPlaying) {
             // turn off
+            timeProgress = mediaPlayer.getCurrentPosition();
             mediaPlayer.pause();
 
         }
         else {
-//            mediaPlayer.
+            mediaPlayer.start();
+            mediaPlayer.seekTo(timeProgress);
             // turn on
         }
 
@@ -118,6 +127,7 @@ public class AudioPlayer {
     public static String longToFormatted(long milliseconds) {
         return "not complete yet";
     }
+
 
 
 }
