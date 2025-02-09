@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     public void serializePlayData(View view) {
 
         jsonOutput = findViewById(R.id.jsonOutput);
+        jsonOutput.setTextColor(Color.RED);
 
         try {
             String jsonString = new Gson().toJson(playData);

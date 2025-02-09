@@ -14,22 +14,22 @@ public class PlayData {
         PlayData demoData = new PlayData();
 
         Playlist playlist1 = new Playlist("PLAYLIST #1");
-        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongA"));
-        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongB"));
-
-        Playlist playlist2 = new Playlist("PLAYLIST #2");
-        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongC"));
-        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongD"));
-        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongE"));
-
-        Playlist playlist3 = new Playlist("PLAYLIST #3");
-        playlist3.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongF"));
+//        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongA"));
+//        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongB"));
+//
+//        Playlist playlist2 = new Playlist("PLAYLIST #2");
+//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongC"));
+//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongD"));
+//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongE"));
+//
+//        Playlist playlist3 = new Playlist("PLAYLIST #3");
+//        playlist3.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongF"));
 
 
         // make add playlist method
         demoData.allPlaylists.add(playlist1);
-        demoData.allPlaylists.add(playlist2);
-        demoData.allPlaylists.add(playlist3);
+//        demoData.allPlaylists.add(playlist2);
+//        demoData.allPlaylists.add(playlist3);
 
 
         return demoData;

@@ -14,6 +14,11 @@ public class Audio {
 //        this.filePath = filePath;
 //    }
 
+    public Audio(String name, String filePath) {
+        this.name = name;
+        this.filePath = filePath;
+    }
+
     public Audio(String name) {
         this.name = name;
     }
