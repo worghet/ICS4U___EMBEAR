@@ -1,61 +1,74 @@
+// == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
+// == IMPORTS =============
 import java.util.ArrayList;
 import java.util.List;
 
-// singleton class
+/** PLAYDATA CLASS:
+ * This is a data object responsible for the storage of all data used in the application.
+ */
 public class PlayData {
 
-    private List<Playlist> allPlaylists = new ArrayList<>();
-    static PlayData playData = generateDemoPlayData();
+    // ==================================
+    // == CLASS VARIABLES [FIELDS] =====
+    // ==================================
 
-    // read from file if it were real, etc
+    // List of all playlists.
+    private List<Playlist> allPlaylists = new ArrayList<>();
+
+    // Because this is a singleton class, it holds its own object.
+    private static PlayData playData = generateDemoPlayData();
+
+    // ==================================
+    // == CONSTRUCTORS ==================
+    // ==================================
+
+    // TEMPORARY: WILL REPLACE WITH DEFAULT CONSTRUCTOR AFTER
     private static PlayData generateDemoPlayData() {
         PlayData demoData = new PlayData();
 
         Playlist playlist1 = new Playlist("PLAYLIST #1");
-//        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongA"));
-//        playlist1.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongB"));
-//
-//        Playlist playlist2 = new Playlist("PLAYLIST #2");
-//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongC"));
-//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongD"));
-//        playlist2.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongE"));
-//
-//        Playlist playlist3 = new Playlist("PLAYLIST #3");
-//        playlist3.modifyPlaylist(Playlist.PROCEDURE_ADD, new Audio("SongF"));
-
-
-        // make add playlist method
         demoData.allPlaylists.add(playlist1);
-//        demoData.allPlaylists.add(playlist2);
-//        demoData.allPlaylists.add(playlist3);
-
 
         return demoData;
     }
 
-    public static void addPlaylist(Playlist playlist) {
-        playData.allPlaylists.add(playlist);
-    }
-
-    public static int getNumPlaylists() {
-        return playData.allPlaylists.size();
-    }
-
-    public static Playlist getPlaylist(int index) {
-        return playData.allPlaylists.get(index);
-    }
-
-
+    // Parameters: None.
+    // Description: Private constructor; singleton class.
     private PlayData() {
 
     }
 
+    // ==================================
+    // == MANIPULATOR METHODS ===========
+    // ==================================
+
+    // Parameters: (Playlist) playlist
+    // Description: Adds given playlist to list of playlists.
+    public static void addPlaylist(Playlist playlist) {
+        playData.allPlaylists.add(playlist);
+    }
+
+    // ==================================
+    // == GETTER METHODS ================
+    // ==================================
+
+    // Parameters: None | Uses access to class variables.
+    // Description: Returns the number of playlists.
+    public static int getNumPlaylists() {
+        return playData.allPlaylists.size();
+    }
+
+    // Parameters: (int) Playlist index.
+    // Description: Returns the playlist associated with the index within the playlist list.
+    public static Playlist getPlaylist(int index) {
+        return playData.allPlaylists.get(index);
+    }
+
+    // Parameters: None | Uses access to class variables.
+    // Description: Returns the PlayData object.
     public static PlayData getPlayData() {
         return playData;
     }
-
-
-
 }

@@ -37,7 +37,7 @@ public class AudioActivity extends AppCompatActivity {
         totalTimeBox = findViewById(R.id.totalTime);
         audioPlayer = AudioPlayer.getAudioPlayer();
         audioNameBox.setText(getIntent().getStringExtra("AUDIO_NAME"));
-        totalTimeBox.setText(Audio.millisecondsToSeconds(getIntent().getLongExtra("AUDIO_LENGTH", 0)));
+        totalTimeBox.setText(AudioPlayer.getAudioPlayer().getAudioPlaying().getArtist() + "DID SUM");
     }
 
     public void togglePlaying(View view) throws IOException {

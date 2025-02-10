@@ -1,34 +1,50 @@
+// == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
+// == IMPORTS ==================================
+import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.drawable.ColorDrawable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.WindowCompat;
+import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+import java.io.IOException;
+import android.view.View;
+import android.os.Bundle;
+import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-
-import com.google.gson.Gson;
-
+// == PLAYLISTS SCREEN ==============================
 public class MainActivity extends AppCompatActivity {
-// make into singleton too?
 
-    FileManager fileManager;
-    TextView jsonOutput; // CANNOT INITIALIZE BEFORE ONCREATE!!!!!!!
+    // ==================================
+    // == CLASS VARIABLES [FIELDS] =====
+    // ==================================
+
+    TextView jsonOutput;
     PlayData playData;
+
+    // ==================================
+    // == SCREEN BUILDER (ON_CREATE) ====
+    // ==================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Default layout creation.
         super.onCreate(savedInstanceState);
-        clearSystemUI();
         setContentView(R.layout.activity_main);
+//        clearSystemUI();
+
+        // Check that file exists; read from it if it does.
+        jsonOutput = findViewById(R.id.textOutput);
+
+        // make file exist
+        Log.d("checking contents", FileManager.getFileManager().getPlayDataFileContents());
 
         // initialize audioplayer here too
         playData = PlayData.getPlayData();
@@ -36,21 +52,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // ==================================
+    // == UI HELPER METHODS =============
+    // ==================================
+
+    // TODO: CHANGE COMPOSITION OF BUTTONS (INCLUDES REMOVE, NAME, ETC).
+    // Parameters: None.
+    // Description: Loads all Playlists as buttons onto the screen.
     public void renderPlaylistButtons() {
-        // Reference to the LinearLayout inside ScrollView
+
+        // Create a reference to the LinearLayout inside the ScrollView.
         LinearLayout playlistContainer = findViewById(R.id.playlistContainerLayout);
 
-        // Clear existing views in the container (if any)
+        // Clear existing views in the container (if any).
         playlistContainer.removeAllViews();
 
-        // Iterate through each playlist in PlayData
+        // Iterate through each playlist in PlayData.
         for (int playlistIndex = 0; playlistIndex < PlayData.getNumPlaylists(); playlistIndex++) {
+
+            // For convenience: copy the playlist here.
             Playlist playlist = PlayData.getPlaylist(playlistIndex);
-            Button button = new Button(this);
-            button.setText(playlist.getName());  // Set the button text as the playlist name
+
+            // Create a button dedicated to this playlist.
+            Button playlistButton = new Button(this);
+
+            // Set the button text as the playlist name.
+            playlistButton.setText(playlist.getName());
 
             int carryablePlaylistIndex = playlistIndex;
-            button.setOnClickListener(view -> {
+            playlistButton.setOnClickListener(view -> {
                 Intent intent = new Intent(this, PlaylistActivity.class);
                 intent.putExtra("PLAYLIST_INDEX", carryablePlaylistIndex);
                 startActivity(intent);
@@ -58,17 +88,43 @@ public class MainActivity extends AppCompatActivity {
             });
 
             // Add the button to the container layout
-            playlistContainer.addView(button);
+            playlistContainer.addView(playlistButton);
         }
     }
 
+    // Parameters: None.
+    // Description: Gets rid of SYSTEM UI.
+    private void clearSystemUI() {
+
+        // [CLARITY] Gets rid of the top status bar.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // [CLARITY] Gets rid of the bottom navigation bar.
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
+
+    // ==================================
+    // == FUNCTIONALITY METHODS =========
+    // ==================================
+
+    // Parameters: None.
+    // Description: Makes a popup which requests a name for the new playlist.
     public void addPlaylistToPlayData(View view) {
 
-        // edit text is an input getter
-        EditText inputLine = new EditText(this); // created in This activity
+        // ----------------------------------------------------------------|
+        // 1. Create the popup. TODO: CHANGE COMPOSITION OF POPUP (COLOR). |
+        // ----------------------------------------------------------------|
+
+        // Create the input line where the user will write the desired name.
+        EditText inputLine = new EditText(this);
         inputLine.setHint("NEW PLAYLIST NAME:"); // sets what should be entered
 
-        // formatting
         // TODO import own colors, try to make rounded stuff
         inputLine.setPadding(70, 0, 0, 30);
 //        inputLine.setBackgroundColor(); // can use images as background. ex Color.BLACK
@@ -81,10 +137,10 @@ public class MainActivity extends AppCompatActivity {
         popupBuilder.setMessage("PLEASE ENTER THE DESIRED NAME:");
         popupBuilder.setView(inputLine);
 
-        // add buttons and what to do when theyre pressed
+        // ------------------------------------|
+        // 2. Setup "CANCEL" and "ADD" Buttons |
+        // ------------------------------------|
 
-
-        // TODO DISABLE BUTTON UNTIL POSSIBLE (USE LISTENER)
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
 
             // collect new name
@@ -95,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
                 // add to playdata and reload
                 PlayData.addPlaylist(new Playlist(newPlaylistName));
                 renderPlaylistButtons();
+                try {
+                    Log.d("FileManager", "trying to update contents");
+                    FileManager.getFileManager().updatePlayDataFileContents();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
             else {
                 Toast errorPopup = new Toast(this);
@@ -123,41 +185,8 @@ public class MainActivity extends AppCompatActivity {
         popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
     }
 
-    public void serializePlayData(View view) {
-
-        jsonOutput = findViewById(R.id.jsonOutput);
-        jsonOutput.setTextColor(Color.RED);
-
-        try {
-            String jsonString = new Gson().toJson(playData);
-            jsonOutput.setText(jsonString);
-
-        } catch (Exception e) {
-            jsonOutput.setText("Something went wrong.");
-        }
-
-
-//        Button button = findViewById()
-//        playData.
+    // TEMPORARY, WILL REMOVE LATER
+    public void showFileContents(View view) {
+        jsonOutput.setText(FileManager.getFileManager().getPlayDataFileContents());
     }
-
-    public void deserializePlayData(View view) {
-        jsonOutput.setText("This would be the deserialized object..");
-    }
-
-    private void clearSystemUI() {
-
-        // [CLARITY] Gets rid of the top status bar.
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // [CLARITY] Gets rid of the bottom navigation bar.
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-    }
-
 }

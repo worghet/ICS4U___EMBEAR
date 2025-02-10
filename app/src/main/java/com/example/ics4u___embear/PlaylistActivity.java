@@ -19,7 +19,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class PlaylistActivity extends AppCompatActivity {
 
@@ -37,36 +36,35 @@ public class PlaylistActivity extends AppCompatActivity {
     private void loadPlaylistData() {
         playlist = PlayData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
         playlistName = findViewById(R.id.playlistName);
-        ArrayList<Audio> audioList = playlist.getAudioList();
 
         // Set playlist name
         playlistName.setText(playlist.getName());
 
         // Reference to LinearLayout that holds audio buttons
-        LinearLayout audioContainer = findViewById(R.id.audioContainerLayout);
-        audioContainer.removeAllViews();
+        LinearLayout trackContainer = findViewById(R.id.audioContainerLayout);
+        trackContainer.removeAllViews();
 
-        for (int audioIndex = 0; audioIndex < playlist.getNumAudio(); audioIndex++) {
-            Button audioButton = new Button(this);
-            audioButton.setText(playlist.getAudioList().get(audioIndex).getName());
+        for (int trackIndex = 0; trackIndex < playlist.getNumTracks(); trackIndex++) {
+            Button trackButton = new Button(this);
+            trackButton.setText(playlist.getTracks().get(trackIndex).getName());
             // Add click listener if needed to play the audio
 
-            int finalAudioIndex = audioIndex;
-            audioButton.setOnClickListener(view -> {
+            int carryableTrackIndex = trackIndex;
+            trackButton.setOnClickListener(view -> {
                 try {
-                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getAudioList().get(finalAudioIndex));
+                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getTracks().get(carryableTrackIndex));
                     TextView lenSelected = findViewById(R.id.metadata);
-//                    lenSelected.setText(playlist.getAudioList().get(finalAudioIndex));
+                    lenSelected.setText(playlist.getTracks().get(carryableTrackIndex).getArtist());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            audioContainer.addView(audioButton);
+            trackContainer.addView(trackButton);
         }
     }
 
-    public void goToFullscreenAudio(View view) {
+    public void goToFullscreenTrackPlayer(View view) {
         if (AudioPlayer.getAudioPlayer().isPlaying().equals("ON")) {
             Intent intent = new Intent(this, AudioActivity.class);
             intent.putExtra("AUDIO_NAME", AudioPlayer.getAudioPlayer().getAudioPlaying().getName());
@@ -75,7 +73,9 @@ public class PlaylistActivity extends AppCompatActivity {
         }
     }
 
-    public void addSongToPlaylist(View view) {
+
+    // ADD TO FILEMANAGER
+    public void addAudioFile(View view) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("audio/*"); // Only show audio files
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -83,6 +83,8 @@ public class PlaylistActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_AUDIO_PICK);
     }
 
+
+    // MOVE TO FILEMANAGER
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -93,31 +95,35 @@ public class PlaylistActivity extends AppCompatActivity {
                 // Multiple files selected
                 int count = data.getClipData().getItemCount();
                 for (int i = 0; i < count; i++) {
-                    Uri audioUri = data.getClipData().getItemAt(i).getUri(); // Get each URI
+                    Uri trackUri = data.getClipData().getItemAt(i).getUri(); // Get each URI
 
                     // Persist permission to access the file
-                    getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    getContentResolver().takePersistableUriPermission(trackUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                     // Extract file name from URI
-                    String fileName = getFileNameFromUri(audioUri);
+                    String fileName = getFileNameFromUri(trackUri);
 
                     // Create Audio object and add to playlist
-                    Audio audioToAdd = new Audio(fileName, audioUri.toString());
-                    playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, audioToAdd);
+                    Track trackToAdd = new Track(fileName, trackUri.toString());
+
+                    // GET METADATA HERE
+//                    audioToAdd.intializeMetadata(this, Uri.parse(audioToAdd.getFilePath()));
+
+                    playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, trackToAdd);
                 }
             } else if (data.getData() != null) {
                 // Single file selected
-                Uri audioUri = data.getData(); // Get the selected file URI
+                Uri trackUri = data.getData(); // Get the selected file URI
 
                 // Persist permission to access the file
-                getContentResolver().takePersistableUriPermission(audioUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(trackUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 // Extract file name from URI
-                String fileName = getFileNameFromUri(audioUri);
+                String fileName = getFileNameFromUri(trackUri);
 
                 // Create Audio object and add to playlist
-                Audio audioToAdd = new Audio(fileName, audioUri.toString());
-                playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, audioToAdd);
+                Track trackToAdd = new Track(fileName, trackUri.toString());
+                playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, trackToAdd);
             }
 
             // Refresh UI

@@ -4,7 +4,6 @@ package com.example.ics4u___embear;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.provider.MediaStore;
 
 import java.io.IOException;
 
@@ -18,7 +17,7 @@ public class AudioPlayer {
     // fields
 
     private static AudioPlayer audioPlayer = new AudioPlayer();
-    private Audio audioPlaying;
+    private Track audioPlaying;
     private int timeProgress;
     private MediaPlayer mediaPlayer;
     private boolean isPlaying;
@@ -36,11 +35,11 @@ public class AudioPlayer {
         return audioPlayer;
     }
 
-    public Audio getAudioPlaying() {
+    public Track getAudioPlaying() {
         return audioPlaying;
     }
 
-    public void setAudioPlaying(Audio audioPlaying) {
+    public void setAudioPlaying(Track audioPlaying) {
         this.audioPlaying = audioPlaying;
     }
 
@@ -77,7 +76,7 @@ public class AudioPlayer {
         return mediaPlayer;
     }
 
-    public void playAudio(Context context, Audio audio) throws IOException {
+    public void playAudio(Context context, Track audio) throws IOException {
         if (isPlaying) {
             togglePlaying();
         }
@@ -90,6 +89,7 @@ public class AudioPlayer {
         mediaPlayer.prepare();  // Prepare the MediaPlayer to start playing
         mediaPlayer.start();  // Start playing the audio
         isPlaying = true;
+        // if song fully plays (ends) then what?
     }
 
     // pause / resume
@@ -119,7 +119,7 @@ public class AudioPlayer {
         // creates an
     }
 
-    public void setNextInQueue(Audio audio) {
+    public void setNextInQueue(Track audio) {
         //
     }
 

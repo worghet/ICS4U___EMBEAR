@@ -1,72 +1,87 @@
+// == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
+// == IMPORTS =============
 import java.util.ArrayList;
 
-// data object
+/** PLAYLIST CLASS:
+ * This is a data object responsible for playlist data: naming, as well as the tracks inside.
+ */
 public class Playlist {
-// extend serializable
-    // constants
+
+    // ==================================
+    // == CLASS CONSTANTS (UTILITY ======
+    // ==================================
+
+    // Constants used in modifyPlaylist();
     final static int PROCEDURE_DELETE = 0;
     final static int PROCEDURE_ADD = 1;
 
-    // fields
-//    private int numSongs;
-    private String name;
-//    private long totalPlaytime;
-    private ArrayList<Audio> audioList;
-    // private image icon
-    // queue
-//    Gson
+    // ==================================
+    // == CLASS VARIABLES [FIELDS] =====
+    // ==================================
 
-    // constructor
+    private String name;
+    private ArrayList<Track> tracks;
+//    private int numSongs;
+//    private long totalPlaytime;
+//    private image icon
+
+    // ==================================
+    // == CONSTRUCTORS ==================
+    // ==================================
+
     public Playlist(String playlistName) {
-        audioList = new ArrayList<>();
+        tracks = new ArrayList<>();
         name = playlistName;
     }
 
+    // ==================================
+    // == GETTER METHODS ================
+    // ==================================
 
-
-    // methods (getters and setters)
-    public int getNumAudio() {
-        return audioList.size();
+    public int getNumTracks() {
+        return tracks.size();
     }
 
     public String getName() {
         return name;
     }
 
+    public ArrayList<Track> getTracks() {
+        return tracks;
+    }
+
+    // TODO
+    public long getPlaylistLength() {
+        return 100000;
+    }
+
+    // TODO
+    public int getNumberTracks() {
+        return 0;
+    }
+
+    // ==================================
+    // == MANIPULATOR METHODS ===========
+    // ==================================
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public long getTotalPlaytime() {
-        return 0;
-    }
-
-    public ArrayList<Audio> getAudioList() {
-        return audioList;
-    }
-
-    // custom
-
+    // TODO
     public void deletePlaylist() {
 
     }
 
-    // replace with 2 dif methods?             just string?
-    public void modifyPlaylist(int procedure, Audio audio) {
-        if (procedure == PROCEDURE_ADD) {
+    // Parameters: (int) PROCEDURE | (Track) track.
+    // Description: Either adds or removes the given track.
+    public void modifyPlaylist(int PROCEDURE, Track track) {
+        if (PROCEDURE == PROCEDURE_ADD) {
             // check that not exists already?
-            audioList.add(audio);
+            tracks.add(track);
         }
         // if delete ...
-    }
-
-    public long calculatePlaylistLengthMillis() {
-        return 100000;
-    }
-
-    public int howManyAudio() {
-        return 0;
     }
 }

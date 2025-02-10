@@ -42,8 +42,8 @@
         android:layout_marginStart="158dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="163dp"
-        android:onClick="serializePlayData"
-        android:text="SERIALIZE JSON"
+        android:text="SHOW FILE CONTENTS"
+        android:onClick="showFileContents"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.461"
@@ -51,21 +51,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.778" />
 
-    <Button
-        android:id="@+id/deserialize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="deserializePlayData"
-        android:text="DESERIALIZE JSON"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.967" />
-
     <TextView
-        android:id="@+id/jsonOutput"
+        android:id="@+id/textOutput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="THIS IS A TEXTVIEW"
