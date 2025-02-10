@@ -2,13 +2,17 @@
 package com.example.ics4u___embear;
 
 // == IMPORTS =============
+
 import java.util.ArrayList;
 import java.util.List;
 
-/** PLAYDATA CLASS:
+/**
+ * PLAYDATA CLASS:
  * This is a data object responsible for the storage of all data used in the application.
  */
 public class PlayData {
+
+    public static PlayData playData; // shared between activities;   TODO don't
 
     // ==================================
     // == CLASS VARIABLES [FIELDS] =====
@@ -18,7 +22,7 @@ public class PlayData {
     private List<Playlist> allPlaylists = new ArrayList<>();
 
     // Because this is a singleton class, it holds its own object.
-    private static PlayData playData = generateDemoPlayData();
+    // private static PlayData playData = generateDemoPlayData();
 
     // ==================================
     // == CONSTRUCTORS ==================
@@ -34,11 +38,11 @@ public class PlayData {
         return demoData;
     }
 
-    // Parameters: None.
-    // Description: Private constructor; singleton class.
-    private PlayData() {
-
-    }
+//    // Parameters: None.
+//    // Description: Private constructor; singleton class.
+//    private PlayData() {
+//
+//    }
 
     // ==================================
     // == MANIPULATOR METHODS ===========
@@ -46,8 +50,8 @@ public class PlayData {
 
     // Parameters: (Playlist) playlist
     // Description: Adds given playlist to list of playlists.
-    public static void addPlaylist(Playlist playlist) {
-        playData.allPlaylists.add(playlist);
+    public void addPlaylist(Playlist playlist) {
+        allPlaylists.add(playlist);
     }
 
     // ==================================
@@ -56,19 +60,14 @@ public class PlayData {
 
     // Parameters: None | Uses access to class variables.
     // Description: Returns the number of playlists.
-    public static int getNumPlaylists() {
-        return playData.allPlaylists.size();
+    public int getNumPlaylists() {
+        return allPlaylists.size();
     }
 
     // Parameters: (int) Playlist index.
     // Description: Returns the playlist associated with the index within the playlist list.
-    public static Playlist getPlaylist(int index) {
-        return playData.allPlaylists.get(index);
+    public Playlist getPlaylist(int index) {
+        return allPlaylists.get(index);
     }
 
-    // Parameters: None | Uses access to class variables.
-    // Description: Returns the PlayData object.
-    public static PlayData getPlayData() {
-        return playData;
-    }
 }

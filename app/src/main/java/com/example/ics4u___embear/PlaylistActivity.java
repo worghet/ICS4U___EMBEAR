@@ -34,7 +34,7 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     private void loadPlaylistData() {
-        playlist = PlayData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
+        playlist = PlayData.playData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
         playlistName = findViewById(R.id.playlistName);
 
         // Set playlist name
