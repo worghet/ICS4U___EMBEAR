@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+// == PLAYLIST SCREEN ===================================
 public class PlaylistActivity extends AppCompatActivity {
 
     private static final int REQUEST_AUDIO_PICK = 2;

@@ -1,88 +1,84 @@
+// == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
-import android.app.Activity;
-import android.util.Log;
-import android.view.View;
-
+// == IMPORTS ==============
 import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
+import android.util.Log;
+import java.io.File;
 
-// gets all the data needed
+// == FILE MANAGER =======
 public class FileManager {
 
-    // fields
-    static FileManager fileManager = new FileManager();
+    // ==================================
+    // == CLASS VARIABLES [STATIC] ======
+    // ==================================
 
+    public static final String PLAYDATA_FILE_NAME = "playdata.txt";
+    static File PLAYDATA_FILE;
+    static Gson gson = new Gson();
 
-    private String playdataFileContents;
-    private Gson gson = new Gson();
+    // ==================================
+    // == UTILITY METHODS ===============
+    // ==================================
 
-
-    public static final String PLAYDATA_FILE = "playdata.txt";
-
-
-
-
-
-    private FileManager() {}
-
-    public static FileManager getFileManager() {
-        return fileManager;
+    // Parameters: None | Uses access to static File.
+    // Description: Check if the given file exists.
+    public static boolean playDataFileExists() {
+        return PLAYDATA_FILE.exists();
     }
 
-//    public String getSerializedPlayData() {
-//        Log.d("FileManager", "starting to getSerialized");
-//        return gson.toJson(PlayData.getPlayData());
-//    }
+    // Parameters: (PlayData) updatedPlayData.
+    // Description: Overwrites the current save with a serialized updatedPlayData.
+    public static void savePlayData(PlayData updatedPlayData) {
 
-    public void deserializePlayData(View view) {
-        // playdata set to (read file).deserialize
-    }
+        // Catch any dropped exceptions.
+        try {
 
+            // Try with resources; write into file.
+            try (FileWriter writer = new FileWriter(PLAYDATA_FILE)) {
 
-    public boolean fileEmpty() throws FileNotFoundException {
-        if (getFileContents().isEmpty()) {
-            return true;
-        }
-        return false;
-    }
+                // write + toJson(Object object) methods.
+                // --------------------------------------
+                // 1. Serialize the object into json.
+                // 2. Write it (overwrite) into file.
+                writer.write(gson.toJson(updatedPlayData));
 
-    public String getFileContents() throws FileNotFoundException {
-
-        Scanner fileReader = new Scanner(PLAYDATA_FILE);
-        String contents = "";
-
-        /*
-        READ EMPTY (ONCREATE), SAVE SOMETHING IN IT FIRST (BUTTON), THEN READ IT
-         */
-        while (fileReader.hasNextLine()) {
-            contents += fileReader.nextLine();
+            }
         }
 
-        fileReader.close();
-        return contents;
+        // If anything goes wrong; log the error.
+        catch (Exception e) {
+            Log.d("ERROR", e.toString());
+        }
     }
 
-    public void writeToFile(String dataToWrite) throws IOException {
-        FileWriter fileWriter = new FileWriter(PLAYDATA_FILE);
-        fileWriter.write(dataToWrite);
-//         should close?
-        fileWriter.close();
-    }
+    // Parameters: None | Uses access to static File.
+    // Description: Get all data from the file and return a data-filled PlayData object.
+    public static PlayData loadPlayData() {
 
+        // Catch any dropped exceptions.
+        try {
 
-    public void accessExternalStorage() {
+            // Try with resources; read from the file.
+            try (FileReader reader = new FileReader(PLAYDATA_FILE)) {
 
-    }
+                // fromJson(FileReader (To read file), Class (Object Blueprints)) method.
+                // -------------------------------------------------------------
+                // 1. Read file (if syntax is JSON, it's fine as a text file).
+                // 2. Parse and build a PlayData object.
+                return gson.fromJson(reader, PlayData.class);
 
-    public static void savePlayData(Activity activity, PlayData playData) {
-        File file = activity.getFileStreamPath(PLAYDATA_FILE);
-        // save to json file
+            }
+
+        }
+
+        // If anything goes wrong; just make a new PlayData.
+        catch (Exception e) {
+            return new PlayData();
+        }
+
     }
 
 }

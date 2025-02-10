@@ -1,3 +1,10 @@
+/*
+[NAME] ----- BUSHKOV
+[TASK] CODE REVIEW (ICS4U-01)
+[DATE] 02 / 10 / 2025
+[DESCRIPTION] Local audio organizer and player.
+ */
+
 // == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
@@ -19,19 +26,9 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.view.View;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 
 // == PLAYLISTS SCREEN ==============================
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textOutput;
     PlayData playData;
-    FileManager fileManager;
 
     // ==================================
     // == SCREEN BUILDER (ON_CREATE) ====
@@ -54,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         // Default layout creation.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        clearSystemUI();
+        clearSystemUI();
 
         // Check that file exists; read from it if it does.
         textOutput = findViewById(R.id.textOutput);
@@ -62,10 +58,8 @@ public class MainActivity extends AppCompatActivity {
         // make file exist
         catchDataOnOpen();
 
-//        Log.d("checking contents", FileManager.getFileManager().getPlayDataFileContents());
-
         // initialize audioplayer here too
-        //playData = PlayData.getPlayData();
+
         renderPlaylistButtons();
 
     }
@@ -146,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO import own colors, try to make rounded stuff
         inputLine.setPadding(70, 0, 0, 30);
-//        inputLine.setBackgroundColor(); // can use images as background. ex Color.BLACK
-        // setTextSize,
 
         // alert dialogue is the actual UI popup
         AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this); // again, to create in this activity
@@ -160,35 +152,34 @@ public class MainActivity extends AppCompatActivity {
         // 2. Setup "CANCEL" and "ADD" Buttons |
         // ------------------------------------|
 
+        // When the add button is pressed.
+        // TODO: MAKE UNCLICKABLE FOR CERTAIN CONDITIONS?
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
 
-            // collect new name
-            String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
-            // can do error checking here: not empty, not already in playdata
+            // Read what is in the entered line.
+             String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
 
+            // ERROR CHECKING ----
+
+            // Check if String entered is empty.
             if (!newPlaylistName.isEmpty()) {
-                // add to playdata and reload
+
+                // TODO CHECK THAT THE PLAYLIST NAME DOESNT ALREADY EXIST
+
+                // Add the new playlist to playData.
                 playData.addPlaylist(new Playlist(newPlaylistName));
+
+                File file = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
+
+                FileManager.savePlayData(playData);
+
                 renderPlaylistButtons();
-//                try {
-//                    Log.d("FileManager", "trying to update contents");
-////                    FileManager.getFileManager().updatePlayDataFileContents();
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
+
 
                // FileManager.savePlayData(this, playData);
                 // SAVE PLAYDATA
-                File file = getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
-                try {
-                    try (FileWriter writer = new FileWriter(file)) {
-                        Gson gson = new Gson();
-                        String serializedPlayData = gson.toJson(playData);
-                        writer.write(serializedPlayData);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                File file = getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
+
 
             } else {
                 Toast errorPopup = new Toast(this);
@@ -196,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
                 errorPopup.show();
             }
         }));
+
+
 
         // when cancel is pressed
         popupBuilder.setNegativeButton("CANCEL", null);
@@ -217,98 +210,22 @@ public class MainActivity extends AppCompatActivity {
         popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
     }
 
+
     // Parameters: None.
-    // Initialize playdata.
-    // If the saved file exists, restore playdata from there; otherwise make an empty playdata
+    // Description: Load playData from file (if exists). Otherwise, make it empty.
     public void catchDataOnOpen() {
 
-        File file = getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
+        // Get file using context of Activity; save it in the FileManager class.
+        FileManager.PLAYDATA_FILE = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
 
-        if (file == null || !file.exists()) { // should not be null really?
-            Log.d("READING FILE EXISTS", "no, creating empty data");
-            playData = new PlayData();
-            PlayData.playData = playData;
-        } else {
-            Log.d("READING FILE EXISTS", "yes, lets read");
+        // Check that the file exists; if it does, load data.
+        if (FileManager.playDataFileExists()) { playData = FileManager.loadPlayData(); }
 
-            try {
+        // If the file does not exist; assign empty one.
+        else { playData = new PlayData(); }
 
-
-                try (FileReader reader = new FileReader(file)) {
-                    Gson gson = new Gson();
-
-                    playData = gson.fromJson(reader, PlayData.class);
-                    PlayData.playData = playData;
-
-                }
-
-            } catch (Exception e) {
-                Log.d("READING FILE ERROR", e.toString());
-
-                // TODO if error (parse error like),
-                // CREATE empty playdata here
-                playData = new PlayData();
-                PlayData.playData = playData;
-
-
-            }
-
-//            playData = new PlayData();
-//            PlayData.playData = playData;
-        }
-
-//
-//        try {
-//
-//            try (FileInputStream fileInputStream = openFileInput(FileManager.PLAYDATA_FILE);
-//                 InputStreamReader isr = new InputStreamReader(fileInputStream, "UTF-8");
-//                 BufferedReader br = new BufferedReader(isr)) {
-//
-//                String line;
-//                while ((line = br.readLine()) != null) {
-//                    Log.d("READING FILE",line);
-//                }
-//
-//
-//                // [CLARITY] Initialize fileOutputStream to write the stat file.
-//
-//                //fileOutputStream.write("0:0 0 0 0 0 0:0".getBytes());
-//            }
-//
-//
-//        } catch (Exception e) {
-//            Log.d("READING FILE ERROR", e.toString());
-//        }
-
-
-
-//         FILE SHOULD EXIST AS IT IS INITIALIZED IN THE CLASS...
-
-//        try {
-//
-//            try (FileOutputStream fileOutputStream = openFileOutput(FileManager.PLAYDATA_FILE, MODE_PRIVATE)) {
-//                // [CLARITY] Initialize fileOutputStream to write the stat file.
-//
-//                //fileOutputStream.write("0:0 0 0 0 0 0:0".getBytes());
-//            }
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
-    }
-
-
-    public void writeHello(View view) throws IOException {
-//        FileManager.getFileManager().writeToFile("Hello!");
-        textOutput.setText("adding Hello!");
-    }
-
-    // TEMPORARY, WILL REMOVE LATER
-    public void showFileContents(View view) throws FileNotFoundException {
-//        textOutput.setText("I will show it to you..");
-        textOutput.setText(FileManager.getFileManager().getFileContents());
+        // Set local playData to universal one.
+        // TODO access universal always
+        PlayData.playData = playData;
     }
 }
