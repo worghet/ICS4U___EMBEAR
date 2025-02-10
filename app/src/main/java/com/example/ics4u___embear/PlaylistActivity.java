@@ -106,6 +106,9 @@ public class PlaylistActivity extends AppCompatActivity {
                     // Create Audio object and add to playlist
                     Track trackToAdd = new Track(fileName, trackUri.toString());
 
+                    // Save playData file
+                    FileManager.savePlayData(this, PlayData.playData);
+
                     // GET METADATA HERE
 //                    audioToAdd.intializeMetadata(this, Uri.parse(audioToAdd.getFilePath()));
 
@@ -167,7 +170,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
         // TODO DISABLE BUTTON UNTIL POSSIBLE (USE LISTENER)
-        popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
+        popupBuilder.setPositiveButton("RENAME", ((dialog, which) -> {
 
             // collect new name
             String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
@@ -175,6 +178,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
             if (!newPlaylistName.isEmpty()) {
                 playlist.setName(newPlaylistName);
+                FileManager.savePlayData(this, PlayData.playData);
                 loadPlaylistData();
                 // TODO re render playlist buttons
             }

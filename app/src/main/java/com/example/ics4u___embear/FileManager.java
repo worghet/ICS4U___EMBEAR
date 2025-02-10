@@ -1,88 +1,97 @@
+// == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
-import android.app.Activity;
-import android.util.Log;
-import android.view.View;
+// == IMPORTS =======================
+
+import java.io.FileNotFoundException;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import android.app.Activity;
+
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileWriter;
+
+import android.content.Context;
+import android.view.View;
+
 import java.util.Scanner;
+import java.io.File;
 
-// gets all the data needed
+// == FILE MANAGER =======
 public class FileManager {
-
-    // fields
-    static FileManager fileManager = new FileManager();
-
-
-    private String playdataFileContents;
-    private Gson gson = new Gson();
-
 
     public static final String PLAYDATA_FILE = "playdata.txt";
 
+    // ==================================
+    // == CLASS VARIABLES [FIELDS] =====
+    // ==================================
 
+    private String playdataFileContents;
+    static Gson gson = new Gson();
+    // private File PLAYDATA_FILE?
 
+    // ==================================
+    // == UTILITY METHODS ===============
+    // ==================================
 
+    public static void savePlayData(Context context, PlayData newPlaydata) {
 
-    private FileManager() {}
+        // Get file using context.
+        File file = context.getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
 
-    public static FileManager getFileManager() {
-        return fileManager;
-    }
+        // Catch any dropped exceptions.
+        try {
 
-//    public String getSerializedPlayData() {
-//        Log.d("FileManager", "starting to getSerialized");
-//        return gson.toJson(PlayData.getPlayData());
-//    }
+            // Try with resources; write into the file.
+            try (FileWriter writer = new FileWriter(file)) {
 
-    public void deserializePlayData(View view) {
-        // playdata set to (read file).deserialize
-    }
+                // Get serialized playData object.
+                String serializedPlayData = gson.toJson(newPlaydata);
 
+                // Overwrite anything inside the file with the new serialized data.
+                writer.write(serializedPlayData);
 
-    public boolean fileEmpty() throws FileNotFoundException {
-        if (getFileContents().isEmpty()) {
-            return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return false;
     }
 
-    public String getFileContents() throws FileNotFoundException {
+    // Parameters: Context | Where to grab the file from.
+    // Description: Get all data from the file and return a data-filled PlayData object.
+    public static PlayData loadPlayData(Context context) {
 
-        Scanner fileReader = new Scanner(PLAYDATA_FILE);
-        String contents = "";
+        // Get file using context.
+        File file = context.getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
 
-        /*
-        READ EMPTY (ONCREATE), SAVE SOMETHING IN IT FIRST (BUTTON), THEN READ IT
-         */
-        while (fileReader.hasNextLine()) {
-            contents += fileReader.nextLine();
+        // Catch any dropped exceptions.
+        try {
+
+            // Try with resources; read from the file.
+            try (FileReader reader = new FileReader(file)) {
+
+                // fromJson(FileReader (To read file), Class (Object Blueprints)) method.
+                // -------------------------------------------------------------
+                // 1. Read file (if syntax is JSON, it's fine as a text file).
+                // 2. Parse and build a PlayData object.
+
+                return gson.fromJson(reader, PlayData.class);
+            }
+
         }
 
-        fileReader.close();
-        return contents;
-    }
-
-    public void writeToFile(String dataToWrite) throws IOException {
-        FileWriter fileWriter = new FileWriter(PLAYDATA_FILE);
-        fileWriter.write(dataToWrite);
-//         should close?
-        fileWriter.close();
-    }
-
-
-    public void accessExternalStorage() {
+        // If anything goes wrong; just make a new PlayData.
+        catch (Exception e) {
+            return new PlayData();
+        }
 
     }
 
-    public static void savePlayData(Activity activity, PlayData playData) {
-        File file = activity.getFileStreamPath(PLAYDATA_FILE);
-        // save to json file
+    // Parameters: File | File which to check exists.
+    // Description: Check if the given file exists.
+    public static boolean fileExists(File file) {
+        return (file == null || !file.exists());
     }
-
 }
