@@ -42,7 +42,7 @@ public class PlaylistActivity extends AppCompatActivity {
     private void renderPlaylistData() {
         playlist = PlayData.playData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
 
-        playlistContentData.setText(playlist.getNumberOfTracks() + " tracks in here");
+        playlistContentData.setText(playlist.getNumberOfTracks() + " TRACKS | " + Track.formatMilliseconds(playlist.getPlaylistPlayTime()) + " TOTAL");
 
         // Set playlist name
         playlistName.setText(playlist.getName());
@@ -66,7 +66,7 @@ public class PlaylistActivity extends AppCompatActivity {
             int carryableTrackIndex = trackIndex;
             trackButton.setOnClickListener(view -> {
                 try {
-                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
+                    trackPlayer.getTrackPlayer().playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
 
 
                     TextView lenSelected = findViewById(R.id.metadata);
@@ -82,8 +82,8 @@ public class PlaylistActivity extends AppCompatActivity {
             removeTrackButton.setText("del");
             removeTrackButton.setOnClickListener(del -> {
 
-                if (AudioPlayer.getAudioPlayer().getMediaPlayer().isPlaying()) {
-                    AudioPlayer.getAudioPlayer().togglePlaying();
+                if (trackPlayer.getTrackPlayer().getMediaPlayer().isPlaying()) {
+                    trackPlayer.getTrackPlayer().togglePlaying();
                 }
                 playlist.removeTrack(playlist.getAllTracks().get(carryableTrackIndex));
                 FileManager.savePlayData(PlayData.playData);
@@ -99,10 +99,10 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void goToFullscreenTrackPlayer(View view) {
-        if (AudioPlayer.getAudioPlayer().isPlaying().equals("ON")) {
+        if (trackPlayer.getTrackPlayer().isPlaying().equals("ON")) {
             Intent intent = new Intent(this, TrackActivity.class);
-            intent.putExtra("AUDIO_NAME", AudioPlayer.getAudioPlayer().getAudioPlaying().getName());
-            intent.putExtra("AUDIO_LENGTH", AudioPlayer.getAudioPlayer().getAudioPlaying().getLengthTime());
+            intent.putExtra("AUDIO_NAME", trackPlayer.getTrackPlayer().getAudioPlaying().getName());
+            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlayer().getAudioPlaying().getLengthTime());
             startActivity(intent);
         }
     }
@@ -241,8 +241,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
     public void deletePlaylist(View view) {
 
-        if (AudioPlayer.getAudioPlayer().getMediaPlayer().isPlaying()) {
-            AudioPlayer.getAudioPlayer().togglePlaying();
+        if (trackPlayer.getTrackPlayer().getMediaPlayer().isPlaying()) {
+            trackPlayer.getTrackPlayer().togglePlaying();
         }
 
         PlayData.playData.removePlaylist(playlist);

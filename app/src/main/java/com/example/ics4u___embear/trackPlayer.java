@@ -8,7 +8,7 @@ import android.net.Uri;
 import java.io.IOException;
 
 // extends mediaplayer?
-public class AudioPlayer {
+public class trackPlayer {
 
     // constants
     final public int NEXT = 0;
@@ -16,14 +16,12 @@ public class AudioPlayer {
 
     // fields
 
-    private static AudioPlayer audioPlayer = new AudioPlayer();
+    private static trackPlayer trackPlayer = new trackPlayer();
     private Track audioPlaying;
     private int timeProgress;
     private MediaPlayer mediaPlayer;
-    private boolean isPlaying;
 
-    private AudioPlayer() {
-        isPlaying = false;
+    private trackPlayer() {
         mediaPlayer = new MediaPlayer();
         timeProgress = 0;
     }
@@ -31,8 +29,8 @@ public class AudioPlayer {
 
 
     // methods (getters / setters)
-    public static AudioPlayer getAudioPlayer() {
-        return audioPlayer;
+    public static trackPlayer getTrackPlayer() {
+        return trackPlayer;
     }
 
     public Track getAudioPlaying() {
@@ -52,7 +50,7 @@ public class AudioPlayer {
     }
 
     public String isPlaying() {
-        if (isPlaying) {
+        if (mediaPlayer.isPlaying()) {
             return "ON";
         }
         return "OFF";
@@ -77,7 +75,7 @@ public class AudioPlayer {
     }
 
     public void playAudio(Context context, Track audio) throws IOException {
-        if (isPlaying) {
+        if (mediaPlayer.isPlaying()) {
             togglePlaying();
         }
 
@@ -88,13 +86,12 @@ public class AudioPlayer {
 
         mediaPlayer.prepare();  // Prepare the MediaPlayer to start playing
         mediaPlayer.start();  // Start playing the audio
-        isPlaying = true;
-        // if song fully plays (ends) then what?
+        // if song fully plays (ends) then what? then we check mediaplaying.isplayimg
     }
 
     // pause / resume
     public void togglePlaying() {
-        if (isPlaying) {
+        if (mediaPlayer.isPlaying()) {
             // turn off
             timeProgress = mediaPlayer.getCurrentPosition();
             mediaPlayer.pause();
@@ -106,7 +103,6 @@ public class AudioPlayer {
             // turn on
         }
 
-        isPlaying = !isPlaying;
     }
 
     // queue management (use arrays?)
@@ -121,11 +117,6 @@ public class AudioPlayer {
 
     public void setNextInQueue(Track audio) {
         //
-    }
-
-    // sum static thing for formatting
-    public static String longToFormatted(long milliseconds) {
-        return "not complete yet";
     }
 
 

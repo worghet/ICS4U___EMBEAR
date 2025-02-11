@@ -4,7 +4,6 @@ package com.example.ics4u___embear;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.util.Log;
 
 /** TRACK CLASS:
  * This is a data object responsible for track (audio) data.
@@ -17,7 +16,7 @@ public class Track {
 
     // Track details.
     private String name, artist;
-    private long lengthTime; // Duration in milliseconds.
+    private int lengthTime; // Duration in milliseconds.
     private String filePath;
 
 //    private Uri fileUri;
@@ -56,7 +55,7 @@ public class Track {
         return filePath;
     }
 
-    public long getLengthTime() {
+    public int getLengthTime() {
         return lengthTime;
     }
 
@@ -73,13 +72,47 @@ public class Track {
 
     // Parameters: (long) milliseconds.
     // Description: Returns a formatted string MM:SS.
-    static public String millisecondsToSeconds(long milliseconds) {
-        int minutes, seconds;
+    static public String formatMilliseconds(int milliseconds) {
+        int minutes, seconds, hours;
+        String formattedText = "";
 
-        seconds = (int) milliseconds / 1000;
-        minutes = seconds / 60;
-        seconds %= 60;
+        seconds = milliseconds / 1000;
 
-        return (minutes + ":" + seconds);
+        if (seconds > 60) {
+            minutes = seconds / 60;
+            seconds %= 60;
+
+            if (minutes > 60) {
+                hours = minutes / 60;
+                minutes %= 60;
+
+                formattedText += hours + ":";
+                if (minutes < 10) {
+                    formattedText += "0";
+                }
+
+                formattedText += minutes + ":";
+
+
+            }
+            // mm:ss
+            else {
+                formattedText += minutes + ":";
+            }
+        }
+        else {
+            formattedText += "0:";
+
+        }
+
+        if (seconds < 10) {
+            formattedText += "0";
+        }
+        formattedText += seconds;
+
+        return formattedText;
+
+
+
     }
 }

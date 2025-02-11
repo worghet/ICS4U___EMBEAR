@@ -59,7 +59,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar2"
+        android:id="@+id/progressDuration"
         android:layout_width="343dp"
         android:layout_height="27dp"
         app:layout_constraintBottom_toTopOf="@+id/togglePlaying"
@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CURRENT_TIME"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar2"
+        app:layout_constraintBottom_toTopOf="@+id/progressDuration"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.096"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TOTAL_TIME"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar2"
+        app:layout_constraintBottom_toTopOf="@+id/progressDuration"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.903"
         app:layout_constraintStart_toStartOf="parent"
