@@ -1,6 +1,11 @@
 // == FILE LOCATION ===============
 package com.example.ics4u___embear;
 
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.util.Log;
+
 /** TRACK CLASS:
  * This is a data object responsible for track (audio) data.
  */
@@ -22,9 +27,14 @@ public class Track {
     // == CONSTRUCTORS ==================
     // ==================================
 
-    public Track(String name, String filePath) {
+    public Track(String name, String filePath, Context context) {
         this.filePath = filePath;
         this.name = name;
+
+        MediaPlayer mediaPlayer = MediaPlayer.create(context, Uri.parse(filePath));
+        lengthTime = mediaPlayer.getDuration();
+        mediaPlayer.release();
+
         // TODO
         // getArtist --> if none; UNKNOWN ARTIST
         // getLengthTime (MUST)
@@ -53,6 +63,13 @@ public class Track {
     // ==================================
     // == OTHER USEFUL METHODS ==========
     // ==================================
+
+    public void calculatePlaytime(Context context) {
+
+        // may be wise to surround with try/catch..
+
+
+    }
 
     // Parameters: (long) milliseconds.
     // Description: Returns a formatted string MM:SS.

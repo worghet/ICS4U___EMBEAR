@@ -53,13 +53,15 @@ public class Playlist {
     }
 
     // TODO
-    public long getPlaylistLength() {
+    public long getPlaylistPlayTime() {
+
+        // iterate through each audio, take sum.. format it
+
         return 100000;
     }
 
-    // TODO
-    public int getNumberTracks() {
-        return 0;
+    public int getNumberOfTracks() {
+        return allTracks.size();
     }
 
     // ==================================
@@ -70,7 +72,6 @@ public class Playlist {
         this.name = name;
     }
 
-    // TODO
     public void removeTrack(Track track) {
         allTracks.remove(track);
     }

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
-public class AudioActivity extends AppCompatActivity {
+public class TrackActivity extends AppCompatActivity {
 
     TextView audioNameBox, onOffBox, totalTimeBox, durationBox;
     AudioPlayer audioPlayer;
@@ -16,6 +16,11 @@ public class AudioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio);
+
+        audioNameBox = findViewById(R.id.audioName);
+        onOffBox = findViewById(R.id.playingStatus);
+        totalTimeBox = findViewById(R.id.totalTime);
+
         // remove device ui
         try {
             renderAudioData();
@@ -32,12 +37,9 @@ public class AudioActivity extends AppCompatActivity {
     }
 //
     private void renderAudioData() throws IOException {
-        audioNameBox = findViewById(R.id.audioName);
-        onOffBox = findViewById(R.id.playingStatus);
-        totalTimeBox = findViewById(R.id.totalTime);
         audioPlayer = AudioPlayer.getAudioPlayer();
         audioNameBox.setText(getIntent().getStringExtra("AUDIO_NAME"));
-        totalTimeBox.setText(AudioPlayer.getAudioPlayer().getAudioPlaying().getArtist() + "DID SUM");
+        totalTimeBox.setText(Track.millisecondsToSeconds(audioPlayer.getAudioPlaying().getLengthTime()));
     }
 
     public void togglePlaying(View view) throws IOException {

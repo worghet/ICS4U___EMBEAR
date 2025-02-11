@@ -25,19 +25,24 @@ import java.io.IOException;
 public class PlaylistActivity extends AppCompatActivity {
 
     private static final int REQUEST_AUDIO_PICK = 2;
-    TextView playlistName;
+    TextView playlistName, playlistContentData;
     Playlist playlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+
+        playlistName = findViewById(R.id.playlistName);
+        playlistContentData = findViewById(R.id.totalDuration);
+
         renderPlaylistData();
     }
 
     private void renderPlaylistData() {
         playlist = PlayData.playData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
-        playlistName = findViewById(R.id.playlistName);
+
+        playlistContentData.setText(playlist.getNumberOfTracks() + " tracks in here");
 
         // Set playlist name
         playlistName.setText(playlist.getName());
@@ -95,7 +100,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     public void goToFullscreenTrackPlayer(View view) {
         if (AudioPlayer.getAudioPlayer().isPlaying().equals("ON")) {
-            Intent intent = new Intent(this, AudioActivity.class);
+            Intent intent = new Intent(this, TrackActivity.class);
             intent.putExtra("AUDIO_NAME", AudioPlayer.getAudioPlayer().getAudioPlaying().getName());
             intent.putExtra("AUDIO_LENGTH", AudioPlayer.getAudioPlayer().getAudioPlaying().getLengthTime());
             startActivity(intent);
@@ -132,7 +137,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     String fileName = getFileNameFromUri(trackUri);
 
                     // Create Audio object and add to playlist
-                    Track trackToAdd = new Track(fileName, trackUri.toString());
+                    Track trackToAdd = new Track(fileName, trackUri.toString(), this);
 
                     // GET METADATA HERE
 //                    audioToAdd.intializeMetadata(this, Uri.parse(audioToAdd.getFilePath()));
@@ -150,7 +155,7 @@ public class PlaylistActivity extends AppCompatActivity {
                 String fileName = getFileNameFromUri(trackUri);
 
                 // Create Audio object and add to playlist
-                Track trackToAdd = new Track(fileName, trackUri.toString());
+                Track trackToAdd = new Track(fileName, trackUri.toString(), this);
                 playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, trackToAdd);
             }
 
