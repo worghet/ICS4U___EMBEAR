@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,10 +32,10 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
-        loadPlaylistData();
+        renderPlaylistData();
     }
 
-    private void loadPlaylistData() {
+    private void renderPlaylistData() {
         playlist = PlayData.playData.getPlaylist(getIntent().getIntExtra("PLAYLIST_INDEX", 0));
         playlistName = findViewById(R.id.playlistName);
 
@@ -46,22 +47,49 @@ public class PlaylistActivity extends AppCompatActivity {
         trackContainer.removeAllViews();
 
         for (int trackIndex = 0; trackIndex < playlist.getNumTracks(); trackIndex++) {
+
+            LinearLayout trackAndDeleteContainer = new LinearLayout(this);
+            trackAndDeleteContainer.setOrientation(LinearLayout.HORIZONTAL);
+            trackAndDeleteContainer.setGravity(Gravity.CENTER);
+            trackAndDeleteContainer.setPadding(16, 16, 16, 16);
+
+
             Button trackButton = new Button(this);
-            trackButton.setText(playlist.getTracks().get(trackIndex).getName());
+            trackButton.setText(playlist.getAllTracks().get(trackIndex).getName());
             // Add click listener if needed to play the audio
 
             int carryableTrackIndex = trackIndex;
             trackButton.setOnClickListener(view -> {
                 try {
-                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getTracks().get(carryableTrackIndex));
+                    AudioPlayer.getAudioPlayer().playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
+
+
                     TextView lenSelected = findViewById(R.id.metadata);
-                    lenSelected.setText(playlist.getTracks().get(carryableTrackIndex).getArtist());
+                    lenSelected.setText(playlist.getAllTracks().get(carryableTrackIndex).getArtist());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-            trackContainer.addView(trackButton);
+            // ===========
+
+            Button removeTrackButton = new Button(this);
+            removeTrackButton.setText("del");
+            removeTrackButton.setOnClickListener(del -> {
+
+                if (AudioPlayer.getAudioPlayer().getMediaPlayer().isPlaying()) {
+                    AudioPlayer.getAudioPlayer().togglePlaying();
+                }
+                playlist.removeTrack(playlist.getAllTracks().get(carryableTrackIndex));
+                FileManager.savePlayData(PlayData.playData);
+                renderPlaylistData();
+            });
+
+
+
+            trackAndDeleteContainer.addView(trackButton);
+            trackAndDeleteContainer.addView(removeTrackButton);
+            trackContainer.addView(trackAndDeleteContainer);
         }
     }
 
@@ -73,7 +101,6 @@ public class PlaylistActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
 
     // ADD TO FILEMANAGER
     public void addAudioFile(View view) {
@@ -128,7 +155,8 @@ public class PlaylistActivity extends AppCompatActivity {
             }
 
             // Refresh UI
-            loadPlaylistData();
+            FileManager.savePlayData(PlayData.playData);
+            renderPlaylistData();
         }
     }
 
@@ -176,7 +204,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
             if (!newPlaylistName.isEmpty()) {
                 playlist.setName(newPlaylistName);
-                loadPlaylistData();
+                FileManager.savePlayData(PlayData.playData);
+                renderPlaylistData();
                 // TODO re render playlist buttons
             }
             else {
@@ -203,6 +232,28 @@ public class PlaylistActivity extends AppCompatActivity {
         popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
 
 
+    }
+
+    public void deletePlaylist(View view) {
+
+        if (AudioPlayer.getAudioPlayer().getMediaPlayer().isPlaying()) {
+            AudioPlayer.getAudioPlayer().togglePlaying();
+        }
+
+        PlayData.playData.removePlaylist(playlist);
+        FileManager.savePlayData(PlayData.playData);
+
+        // refresh
+//        MainActivity.
+        finish();
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        renderPlaylistData();
     }
 
     public void goBack(View view) {

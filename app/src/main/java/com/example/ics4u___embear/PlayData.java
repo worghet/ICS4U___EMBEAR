@@ -38,12 +38,6 @@ public class PlayData {
         return demoData;
     }
 
-//    // Parameters: None.
-//    // Description: Private constructor; singleton class.
-//    private PlayData() {
-//
-//    }
-
     // ==================================
     // == MANIPULATOR METHODS ===========
     // ==================================
@@ -52,6 +46,10 @@ public class PlayData {
     // Description: Adds given playlist to list of playlists.
     public void addPlaylist(Playlist playlist) {
         allPlaylists.add(playlist);
+    }
+
+    public void removePlaylist(Playlist playlist) {
+        allPlaylists.remove(playlist);
     }
 
     // ==================================

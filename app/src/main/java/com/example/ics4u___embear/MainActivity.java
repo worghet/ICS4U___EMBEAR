@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
     }
 
-
     // Parameters: None.
     // Description: Load playData from file (if exists). Otherwise, make it empty.
     public void catchDataOnOpen() {
@@ -228,4 +227,19 @@ public class MainActivity extends AppCompatActivity {
         // TODO access universal always
         PlayData.playData = playData;
     }
+
+
+
+
+
+    // ----------------------------------------------------
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        renderPlaylistButtons();
+    }
+
+
+
 }

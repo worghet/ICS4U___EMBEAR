@@ -22,7 +22,7 @@ public class Playlist {
     // ==================================
 
     private String name;
-    private ArrayList<Track> tracks;
+    private ArrayList<Track> allTracks;
 //    private int numSongs;
 //    private long totalPlaytime;
 //    private image icon
@@ -32,7 +32,7 @@ public class Playlist {
     // ==================================
 
     public Playlist(String playlistName) {
-        tracks = new ArrayList<>();
+        allTracks = new ArrayList<>();
         name = playlistName;
     }
 
@@ -41,15 +41,15 @@ public class Playlist {
     // ==================================
 
     public int getNumTracks() {
-        return tracks.size();
+        return allTracks.size();
     }
 
     public String getName() {
         return name;
     }
 
-    public ArrayList<Track> getTracks() {
-        return tracks;
+    public ArrayList<Track> getAllTracks() {
+        return allTracks;
     }
 
     // TODO
@@ -71,8 +71,8 @@ public class Playlist {
     }
 
     // TODO
-    public void deletePlaylist() {
-
+    public void removeTrack(Track track) {
+        allTracks.remove(track);
     }
 
     // Parameters: (int) PROCEDURE | (Track) track.
@@ -80,7 +80,7 @@ public class Playlist {
     public void modifyPlaylist(int PROCEDURE, Track track) {
         if (PROCEDURE == PROCEDURE_ADD) {
             // check that not exists already?
-            tracks.add(track);
+            allTracks.add(track);
         }
         // if delete ...
     }
