@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
         // make file exist
         catchDataOnOpen();
 
-        // initialize audioplayer here too
-
         renderPlaylistButtons();
 
     }

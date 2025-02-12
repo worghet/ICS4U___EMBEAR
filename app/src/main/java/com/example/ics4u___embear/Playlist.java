@@ -10,21 +10,11 @@ import java.util.ArrayList;
 public class Playlist {
 
     // ==================================
-    // == CLASS CONSTANTS (UTILITY ======
-    // ==================================
-
-    // Constants used in modifyPlaylist();
-    final static int PROCEDURE_DELETE = 0;
-    final static int PROCEDURE_ADD = 1;
-
-    // ==================================
     // == CLASS VARIABLES [FIELDS] =====
     // ==================================
 
     private String name;
     private ArrayList<Track> allTracks;
-//    private int numSongs;
-//    private long totalPlaytime;
 //    private image icon
 
     // ==================================
@@ -52,7 +42,6 @@ public class Playlist {
         return allTracks;
     }
 
-    // TODO
     public int getPlaylistPlayTime() {
 
         int totalPlayTime = 0;
@@ -76,17 +65,11 @@ public class Playlist {
         this.name = name;
     }
 
-    public void removeTrack(Track track) {
-        allTracks.remove(track);
+    public void addTrack(Track track) {
+        allTracks.add(track);
     }
 
-    // Parameters: (int) PROCEDURE | (Track) track.
-    // Description: Either adds or removes the given track.
-    public void modifyPlaylist(int PROCEDURE, Track track) {
-        if (PROCEDURE == PROCEDURE_ADD) {
-            // check that not exists already?
-            allTracks.add(track);
-        }
-        // if delete ...
+    public void removeTrack(Track track) {
+        allTracks.remove(track);
     }
 }

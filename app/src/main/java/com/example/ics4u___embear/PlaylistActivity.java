@@ -26,6 +26,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
     private static final int REQUEST_AUDIO_PICK = 2;
     TextView playlistName, playlistContentData;
+    TrackPlayer trackPlayer = SharedObjects.trackPlayer;
     Playlist playlist;
 
     @Override
@@ -66,7 +67,7 @@ public class PlaylistActivity extends AppCompatActivity {
             int carryableTrackIndex = trackIndex;
             trackButton.setOnClickListener(view -> {
                 try {
-                    trackPlayer.getTrackPlayer().playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
+                    trackPlayer.playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
 
 
                     TextView lenSelected = findViewById(R.id.metadata);
@@ -82,8 +83,8 @@ public class PlaylistActivity extends AppCompatActivity {
             removeTrackButton.setText("del");
             removeTrackButton.setOnClickListener(del -> {
 
-                if (trackPlayer.getTrackPlayer().getMediaPlayer().isPlaying()) {
-                    trackPlayer.getTrackPlayer().togglePlaying();
+                if (trackPlayer.isPlaying()) {
+                    trackPlayer.togglePlaying();
                 }
                 playlist.removeTrack(playlist.getAllTracks().get(carryableTrackIndex));
                 FileManager.savePlayData(PlayData.playData);
@@ -99,10 +100,10 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
     public void goToFullscreenTrackPlayer(View view) {
-        if (trackPlayer.getTrackPlayer().isPlaying().equals("ON")) {
+        if (trackPlayer.isPlaying()) {
             Intent intent = new Intent(this, TrackActivity.class);
-            intent.putExtra("AUDIO_NAME", trackPlayer.getTrackPlayer().getAudioPlaying().getName());
-            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlayer().getAudioPlaying().getLengthTime());
+            intent.putExtra("AUDIO_NAME", trackPlayer.getTrackPlaying().getName());
+            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlaying().getLengthTime());
             startActivity(intent);
         }
     }
@@ -142,7 +143,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     // GET METADATA HERE
 //                    audioToAdd.intializeMetadata(this, Uri.parse(audioToAdd.getFilePath()));
 
-                    playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, trackToAdd);
+                    playlist.addTrack(trackToAdd);
                 }
             } else if (data.getData() != null) {
                 // Single file selected
@@ -156,7 +157,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
                 // Create Audio object and add to playlist
                 Track trackToAdd = new Track(fileName, trackUri.toString(), this);
-                playlist.modifyPlaylist(Playlist.PROCEDURE_ADD, trackToAdd);
+                playlist.addTrack(trackToAdd);
             }
 
             // Refresh UI
@@ -241,8 +242,8 @@ public class PlaylistActivity extends AppCompatActivity {
 
     public void deletePlaylist(View view) {
 
-        if (trackPlayer.getTrackPlayer().getMediaPlayer().isPlaying()) {
-            trackPlayer.getTrackPlayer().togglePlaying();
+        if (trackPlayer.isPlaying()) {
+            trackPlayer.togglePlaying();
         }
 
         PlayData.playData.removePlaylist(playlist);

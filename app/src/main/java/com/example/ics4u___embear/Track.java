@@ -20,7 +20,6 @@ public class Track {
     private String filePath;
 
 //    private Uri fileUri;
-//    private MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
 
     // ==================================
     // == CONSTRUCTORS ==================

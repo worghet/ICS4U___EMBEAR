@@ -3,6 +3,7 @@ package com.example.ics4u___embear;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,7 +15,8 @@ public class TrackActivity extends AppCompatActivity {
 
     TextView audioNameBox, onOffBox, totalTimeBox, currentTimeBox;
     SeekBar durationSeekbar;
-    trackPlayer audioPlayer;
+    TrackPlayer trackPlayer = SharedObjects.trackPlayer;
+    Button togglePlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +24,11 @@ public class TrackActivity extends AppCompatActivity {
         setContentView(R.layout.activity_track);
 
         audioNameBox = findViewById(R.id.audioName);
-        onOffBox = findViewById(R.id.playingStatus);
+//        onOffBox = findViewById(R.id.playingStatus);
         totalTimeBox = findViewById(R.id.totalTime);
         currentTimeBox = findViewById(R.id.currentTime);
         durationSeekbar = findViewById(R.id.progressDuration);
+        togglePlaying = findViewById(R.id.togglePlaying);
 
         // remove device ui
         try {
@@ -43,17 +46,16 @@ public class TrackActivity extends AppCompatActivity {
     }
 //
     private void renderAudioData() throws IOException {
-        audioPlayer = trackPlayer.getTrackPlayer();
         audioNameBox.setText(getIntent().getStringExtra("AUDIO_NAME"));
-        totalTimeBox.setText(Track.formatMilliseconds(audioPlayer.getAudioPlaying().getLengthTime()));
+        totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getLengthTime()));
         initializeSeekbar();
     }
 
     // how do i make this UNIVERSAL?
     public void initializeSeekbar() {
         durationSeekbar.setMin(0);
-        durationSeekbar.setMax(audioPlayer.getAudioPlaying().getLengthTime());
-        durationSeekbar.setProgress(audioPlayer.getMediaPlayer().getCurrentPosition());
+        durationSeekbar.setMax(trackPlayer.getTrackPlaying().getLengthTime());
+        durationSeekbar.setProgress(trackPlayer.getCurrentPosition());
         durationSeekbar.setKeyProgressIncrement(1);
 
         // Initialize the currentTimeBox with the current progress of the seekbar
@@ -65,7 +67,7 @@ public class TrackActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Get the current position of the audio
-                int currentPosition = audioPlayer.getMediaPlayer().getCurrentPosition();
+                int currentPosition = trackPlayer.getCurrentPosition();
 
                 // Update the SeekBar and the currentTimeBox every second
                 durationSeekbar.setProgress(currentPosition);
@@ -88,13 +90,15 @@ public class TrackActivity extends AppCompatActivity {
 
                 // If the user is dragging the SeekBar, update the audio player's position
                 if (fromUser) {
-                    audioPlayer.getMediaPlayer().seekTo(progress);
+                    trackPlayer.seekTo(progress);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+
                 // Optionally, you can stop periodic updates when the user is dragging
+//                currentTimeBox.setText(Track.formatMilliseconds(durationSeekbar.getProgress()));
             }
 
             @Override
@@ -107,11 +111,16 @@ public class TrackActivity extends AppCompatActivity {
 
 
 
-    public void togglePlaying(View view) throws IOException {
-        audioPlayer.togglePlaying();
+    public void togglePlaying(View view) {
+        trackPlayer.togglePlaying();
 //        onOffBox.setText(audioPlayer.isPlaying());
-
-        onOffBox.setText("TOGGLED!");
+        if (togglePlaying.getText().equals(">")) {
+            togglePlaying.setText("| |");
+        }
+        else {
+            togglePlaying.setText(">");
+        }
+//        onOffBox.setText("");
 
 
     }
