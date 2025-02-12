@@ -1,7 +1,8 @@
 // == FILE LOCATION ===============
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
+
 import java.util.ArrayList;
 
 /** PLAYLIST CLASS:
@@ -47,7 +48,7 @@ public class Playlist {
         int totalPlayTime = 0;
         // iterate through each audio, take sum.. format it
         for (Track track : allTracks) {
-            totalPlayTime += track.getLengthTime();
+            totalPlayTime += track.getDuration();
         }
 
         return totalPlayTime;

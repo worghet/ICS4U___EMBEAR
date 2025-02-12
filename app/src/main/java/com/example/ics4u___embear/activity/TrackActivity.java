@@ -1,7 +1,9 @@
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -9,9 +11,19 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ics4u___embear.R;
+import com.example.ics4u___embear.SharedObjects;
+import com.example.ics4u___embear.TrackOverListener;
+import com.example.ics4u___embear.TrackPlayer;
+import com.example.ics4u___embear.data.Track;
+
 import java.io.IOException;
 
-public class TrackActivity extends AppCompatActivity {
+
+import com.example.ics4u___embear.TrackPlayer;
+
+
+public class TrackActivity extends AppCompatActivity implements TrackOverListener {
 
     TextView audioNameBox, onOffBox, totalTimeBox, currentTimeBox;
     SeekBar durationSeekbar;
@@ -29,6 +41,7 @@ public class TrackActivity extends AppCompatActivity {
         currentTimeBox = findViewById(R.id.currentTime);
         durationSeekbar = findViewById(R.id.progressDuration);
         togglePlaying = findViewById(R.id.togglePlaying);
+        trackPlayer.addTrackOverListener(this); // TODO set listeners everywhere?
 
         // remove device ui
         try {
@@ -44,17 +57,23 @@ public class TrackActivity extends AppCompatActivity {
 //        }
 
     }
-//
+
+    //
     private void renderAudioData() throws IOException {
-        audioNameBox.setText(getIntent().getStringExtra("AUDIO_NAME"));
-        totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getLengthTime()));
+        audioNameBox.setText(trackPlayer.getTrackPlaying().getName());
+        totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDuration()));
+        // remove intent from other activities
         initializeSeekbar();
     }
+
+
+    // TRACK PLAYER CONTROLS ---------------------------------------------
+
 
     // how do i make this UNIVERSAL?
     public void initializeSeekbar() {
         durationSeekbar.setMin(0);
-        durationSeekbar.setMax(trackPlayer.getTrackPlaying().getLengthTime());
+        durationSeekbar.setMax(trackPlayer.getTrackPlaying().getDuration());
         durationSeekbar.setProgress(trackPlayer.getCurrentPosition());
         durationSeekbar.setKeyProgressIncrement(1);
 
@@ -109,15 +128,12 @@ public class TrackActivity extends AppCompatActivity {
     }
 
 
-
-
     public void togglePlaying(View view) {
         trackPlayer.togglePlaying();
 //        onOffBox.setText(audioPlayer.isPlaying());
         if (togglePlaying.getText().equals(">")) {
             togglePlaying.setText("| |");
-        }
-        else {
+        } else {
             togglePlaying.setText(">");
         }
 //        onOffBox.setText("");
@@ -125,10 +141,25 @@ public class TrackActivity extends AppCompatActivity {
 
     }
 
+
+    public void playNext(View view) throws IOException {
+        trackPlayer.playNextInQueue(this);
+        renderAudioData();
+    }
+
+    public void playPrevious(View view) throws IOException {
+        trackPlayer.playPreviousInQueue(this);
+        renderAudioData();
+    }
+
+    // GO BACK
+
     public void goBack(View view) {
         finish();
     }
 
-
-
+    @Override
+    public void updateTrackUI() throws IOException {
+        renderAudioData();
+    }
 }

@@ -1,5 +1,5 @@
 // == FILE LOCATION ===============
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.data;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -16,7 +16,7 @@ public class Track {
 
     // Track details.
     private String name, artist;
-    private int lengthTime; // Duration in milliseconds.
+    private int duration; // Duration in milliseconds.
     private String filePath;
 
 //    private Uri fileUri;
@@ -27,15 +27,12 @@ public class Track {
 
     public Track(String name, String filePath, Context context) {
         this.filePath = filePath;
-        this.name = name;
+        this.name = name.substring(0, name.indexOf('.'));
+        this.duration = calculatePlaytime(context);
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(context, Uri.parse(filePath));
-        lengthTime = mediaPlayer.getDuration();
-        mediaPlayer.release();
 
         // TODO
         // getArtist --> if none; UNKNOWN ARTIST
-        // getLengthTime (MUST)
     }
 
     // ==================================
@@ -54,18 +51,20 @@ public class Track {
         return filePath;
     }
 
-    public int getLengthTime() {
-        return lengthTime;
+    public int getDuration() {
+        return duration;
     }
 
     // ==================================
     // == OTHER USEFUL METHODS ==========
     // ==================================
 
-    public void calculatePlaytime(Context context) {
+    public int calculatePlaytime(Context context) {
 
-        // may be wise to surround with try/catch..
-
+        MediaPlayer mediaPlayer = MediaPlayer.create(context, Uri.parse(filePath));
+        int calculatedDuration = mediaPlayer.getDuration();
+        mediaPlayer.release();
+        return calculatedDuration;
 
     }
 

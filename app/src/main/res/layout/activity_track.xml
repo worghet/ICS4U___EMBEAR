@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TrackActivity">
+    tools:context=".activity.TrackActivity">
 
     <Button
         android:id="@+id/togglePlaying"
@@ -37,7 +37,7 @@
         android:layout_width="113dp"
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="301dp"
         android:layout_marginBottom="664dp"
         android:onClick="goBack"
@@ -93,5 +93,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.863"
         app:srcCompat="@drawable/ic_launcher_background" />
+
+    <Button
+        android:id="@+id/next"
+        android:layout_width="80dp"
+        android:layout_height="85dp"
+        android:text="next"
+        android:onClick="playNext"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.585"
+        app:layout_constraintStart_toEndOf="@+id/togglePlaying"
+        app:layout_constraintTop_toBottomOf="@+id/progressDuration"
+        app:layout_constraintVertical_bias="0.213" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="81dp"
+        android:layout_height="78dp"
+        android:text="prev"
+        android:onClick="playPrevious"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/togglePlaying"
+        app:layout_constraintHorizontal_bias="0.419"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressDuration"
+        app:layout_constraintVertical_bias="0.25" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

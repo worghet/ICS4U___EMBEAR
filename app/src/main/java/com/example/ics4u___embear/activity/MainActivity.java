@@ -6,7 +6,7 @@
  */
 
 // == FILE LOCATION ===============
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.activity;
 
 // == IMPORTS ==================================
 
@@ -17,8 +17,10 @@ import android.graphics.drawable.ColorDrawable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
 
+import android.os.Handler;
 import android.widget.LinearLayout;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,11 +29,22 @@ import android.widget.Toast;
 import android.view.View;
 import android.os.Bundle;
 
+import com.example.ics4u___embear.FileManager;
+import com.example.ics4u___embear.R;
+import com.example.ics4u___embear.SharedObjects;
+import com.example.ics4u___embear.TrackOverListener;
+import com.example.ics4u___embear.TrackPlayer;
+import com.example.ics4u___embear.data.PlayData;
+import com.example.ics4u___embear.data.Playlist;
+import com.example.ics4u___embear.data.Track;
+
+
 import java.io.File;
+import java.io.IOException;
 
 
 // == PLAYLISTS SCREEN ==============================
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TrackOverListener {
 
     // ==================================
     // == CLASS VARIABLES [FIELDS] =====
@@ -39,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textOutput;
     PlayData playData;
+    TrackPlayer trackPlayer = SharedObjects.trackPlayer;
 
     // ==================================
     // == SCREEN BUILDER (ON_CREATE) ====
@@ -226,11 +240,41 @@ public class MainActivity extends AppCompatActivity {
         PlayData.playData = playData;
     }
 
-
-
-
-
     // ----------------------------------------------------
+
+
+    // seekbar
+
+    public void togglePlaying(View view) {
+        trackPlayer.togglePlaying();
+//        onOffBox.setText(audioPlayer.isPlaying());
+//        if (togglePlaying.getText().equals(">")) {
+//            togglePlaying.setText("| |");
+//        }
+//        else {
+//            togglePlaying.setText(">");
+//        }
+////        onOffBox.setText("");
+//
+
+    }
+
+
+    public void playNext(View view) throws IOException {
+        trackPlayer.playNextInQueue(this);
+//        renderAudioData();
+    }
+
+    public void playPrevious(View view) {
+
+    }
+
+    @Override
+    public void updateTrackUI() throws IOException {
+        // update player
+    }
+
+// ----------------------------------------------------
 
     @Override
     protected void onResume() {

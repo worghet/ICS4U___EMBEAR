@@ -1,4 +1,4 @@
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,10 +19,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ics4u___embear.FileManager;
+import com.example.ics4u___embear.R;
+import com.example.ics4u___embear.SharedObjects;
+import com.example.ics4u___embear.TrackOverListener;
+import com.example.ics4u___embear.TrackPlayer;
+import com.example.ics4u___embear.data.PlayData;
+import com.example.ics4u___embear.data.Playlist;
+import com.example.ics4u___embear.data.Track;
+
 import java.io.IOException;
 
 // == PLAYLIST SCREEN ===================================
-public class PlaylistActivity extends AppCompatActivity {
+public class PlaylistActivity extends AppCompatActivity implements TrackOverListener {
 
     private static final int REQUEST_AUDIO_PICK = 2;
     TextView playlistName, playlistContentData;
@@ -33,6 +42,9 @@ public class PlaylistActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+
+        trackPlayer.addTrackOverListener(this); // TODO set listeners everywhere?
+
 
         playlistName = findViewById(R.id.playlistName);
         playlistContentData = findViewById(R.id.totalDuration);
@@ -67,11 +79,7 @@ public class PlaylistActivity extends AppCompatActivity {
             int carryableTrackIndex = trackIndex;
             trackButton.setOnClickListener(view -> {
                 try {
-                    trackPlayer.playAudio(this, playlist.getAllTracks().get(carryableTrackIndex));
-
-
-                    TextView lenSelected = findViewById(R.id.metadata);
-                    lenSelected.setText(playlist.getAllTracks().get(carryableTrackIndex).getArtist());
+                    trackPlayer.playTrack(this, playlist.getAllTracks().get(carryableTrackIndex));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -103,7 +111,7 @@ public class PlaylistActivity extends AppCompatActivity {
         if (trackPlayer.isPlaying()) {
             Intent intent = new Intent(this, TrackActivity.class);
             intent.putExtra("AUDIO_NAME", trackPlayer.getTrackPlaying().getName());
-            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlaying().getLengthTime());
+            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlaying().getDuration());
             startActivity(intent);
         }
     }
@@ -255,6 +263,36 @@ public class PlaylistActivity extends AppCompatActivity {
     }
 
 
+    // --------------------- queue
+
+    public void playInOrder(View view) throws IOException {
+        trackPlayer.generateIndexQueue(playlist);
+        trackPlayer.startPlayingQueue(this);
+    }
+
+    public void playShuffle(View view) throws IOException {
+        trackPlayer.generateShuffleQueue(playlist);
+        trackPlayer.startPlayingQueue(this);
+    }
+
+    // TRACK PLAYER CONTROLS ---------------------------------------------
+
+
+    public void playNext(View view) {
+
+    }
+
+    public void playPrevious(View view) {
+
+    }
+
+
+    // GO BACK / OTHER -----------------------------------------
+
+    @Override
+    public void updateTrackUI() {
+        // render the player
+    }
 
     @Override
     protected void onResume() {

@@ -1,5 +1,5 @@
 // == FILE LOCATION ===============
-package com.example.ics4u___embear;
+package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
 

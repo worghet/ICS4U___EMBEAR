@@ -2,6 +2,7 @@
 package com.example.ics4u___embear;
 
 // == IMPORTS ==============
+import com.example.ics4u___embear.data.PlayData;
 import com.google.gson.Gson;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,7 +17,7 @@ public class FileManager {
     // ==================================
 
     public static final String PLAYDATA_FILE_NAME = "playdata.txt";
-    static File PLAYDATA_FILE;
+    public static File PLAYDATA_FILE;
     static Gson gson = new Gson();
 
     // ==================================

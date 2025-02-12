@@ -7,11 +7,15 @@ import android.media.MediaPlayer;
 import android.content.Context;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.SeekBar;
+
+import com.example.ics4u___embear.data.Playlist;
+import com.example.ics4u___embear.data.Track;
 
 /**
  * TRACKPLAYER CLASS:
@@ -34,7 +38,14 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
 
     private Track trackPlaying;
     private int timeProgress;
+
     private boolean queueLooping;
+    private int currentTrackIndex;
+    private boolean isShuffle;
+    private Playlist playingFrom;
+    private Track[] queue;
+
+    private ArrayList<TrackOverListener> allTrackOverListeners = new ArrayList<>();
 
     // ==================================
     // == CONSTRUCTORS ==================
@@ -42,7 +53,15 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
 
     public TrackPlayer() {
         super();
+//        this.setOnCompletionListener(mp -> onTrackFinished());
         timeProgress = 0;
+        queueLooping = true;
+//        toggleQueueLooping();
+//        setLooping(true); SONG LOOPING
+    }
+
+    public void addTrackOverListener(TrackOverListener trackOverListener) {
+        allTrackOverListeners.add(trackOverListener);
     }
 
     // ==================================
@@ -77,8 +96,8 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
     // -- AUDIO PLAYING ------------------------------------------------------------------
 
     // Parameters: (Context) context of the activity | (Track) which track to play.
-    // Description: Plays the specified track (context used for loading the audio itself.
-    public void playAudio(Context context, Track audio) throws IOException {
+    // Description: Plays the specified track (context used for loading the audio itself).
+    public void playTrack(Context context, Track track) throws IOException {
 
         // Stop playing any music that is on already.
         if (isPlaying()) {
@@ -88,11 +107,11 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
         // Clear / Reset the player.
         reset();
 
-        // Set the data source for the given audio.
-        setDataSource(context, Uri.parse(audio.getFilePath()));
+        // Set the data source for the given track.
+        setDataSource(context, Uri.parse(track.getFilePath()));
 
         // Update object variable.
-        trackPlaying = audio;
+        trackPlaying = track;
 
         // Prepare the player, then start it.
         prepare();
@@ -130,28 +149,100 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
 
     // -- QUEUE MANAGEMENT -------------------------------------------------------------
 
-    // Parameters: None.
+    public void startPlayingQueue(Context context) throws IOException {
+      currentTrackIndex = -1;
+      playNextInQueue(context);
+    }
+
+    public void playNextInQueue(Context context) throws IOException {
+        if ((queue.length - 1) == currentTrackIndex) {
+            Log.d("LOOPER", "checking looping status!");
+            if (queueLooping) {
+                Log.d("LOOPER", "trying to loop!");
+                if (isShuffle) {
+                    generateShuffleQueue(playingFrom);
+                }
+                startPlayingQueue(context);
+            }
+
+        }
+        else {
+            currentTrackIndex++;
+            playTrack(context, queue[currentTrackIndex]);
+
+            this.setOnCompletionListener(mp -> {
+                try {
+                    playNextInQueue(context);
+                    for (TrackOverListener trackOverListener : allTrackOverListeners) {
+
+                        trackOverListener.updateTrackUI();
+                    }
+                    Log.d("UPDATING TRACK UI NATURALLY", "tapping it now..");
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+    }
+
+    public void playPreviousInQueue(Context context) throws IOException {
+        if (currentTrackIndex > 0) {
+            currentTrackIndex--;
+            playTrack(context, queue[currentTrackIndex]);
+
+            this.setOnCompletionListener(mp -> {
+                try {
+                    playNextInQueue(context);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+    }
+
+    // Parameters: (Playlist) playlist to generate from.
     // Description: Sets the queue to a by-index list
-    public void generateIndexQueue() {
+    public void generateIndexQueue(Playlist playlist) {
+        queue = new Track[playlist.getNumTracks()];
+        String logStr = "";
+        for (int trackIndex = 0; trackIndex < playlist.getNumTracks(); trackIndex++) {
+            queue[trackIndex] = playlist.getAllTracks().get(trackIndex);
+            logStr += playlist.getAllTracks().get(trackIndex).getName() + ", ";
+        }
 
+        playingFrom = playlist;
+        isShuffle = false;
+        Log.d("QUEUE GEN", logStr);
     }
 
-    // Parameters: None.
+    // Parameters: (Playlist) playlist to generate from.
     // Description: Sets the queue to a randomized list.
-    public void generateShuffleQueue() {
-        // while true; (get random track) if randTrack is in newQueue, ignore, else, add; if lengthAllList and newQueue is same, quit.
-    }
+    public void generateShuffleQueue(Playlist playlist) {
+        queue = new Track[playlist.getNumTracks()];
+        Random random = new Random();
 
-    // Parameters: None.
-    // Description: Sets the given track next in queue. MIGHT REMOVE
-    public void setNextInQueue(Track track) {
-        //
+        for (int queueIndex = 0; queueIndex < playlist.getNumTracks(); queueIndex++) {
+
+            while (true) {
+                Track randomTrack = playlist.getAllTracks().get(random.nextInt(playlist.getNumTracks()));
+                if (!Arrays.asList(queue).contains(randomTrack)) {
+                    queue[queueIndex] = randomTrack;
+                    break;
+                }
+            }
+        }
+        playingFrom = playlist;
+        isShuffle = true;
+
     }
 
     // Parameters: None.
     // Description: Will set / stop looping playlist.
-    public void toggleLooping() {
-
+    public void toggleQueueLooping() {
+        queueLooping = !queueLooping;
     }
 
     // OTHER METHODS --------------------------------------------------------
@@ -210,11 +301,5 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
 //        });
 //    }
 
-//    @Override
-//    public void setOnCompletionListener(OnCompletionListener listener) {
-//        super.setOnCompletionListener(listener);
-//
-//        Log.d("TRACKPLAYER", "FINISHED PLAYING" + trackPlaying.getName());
-//
-//    }
 }
+
