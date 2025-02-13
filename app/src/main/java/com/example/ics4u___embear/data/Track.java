@@ -1,25 +1,21 @@
-// == FILE LOCATION ===============
+// == FILE PACKAGE ===============
 package com.example.ics4u___embear.data;
 
-import android.content.Context;
+// == IMPORTS ===================
 import android.media.MediaPlayer;
+import android.content.Context;
 import android.net.Uri;
 
-/** TRACK CLASS:
- * This is a data object responsible for track (audio) data.
- */
+// == TRACK ========
 public class Track {
 
     // ==================================
     // == CLASS VARIABLES [FIELDS] =====
     // ==================================
 
-    // Track details.
-    private String name, artist;
-    private int duration; // Duration in milliseconds.
+    private String name;
+    private int durationInMilliseconds; // Duration in milliseconds.
     private String filePath;
-
-//    private Uri fileUri;
 
     // ==================================
     // == CONSTRUCTORS ==================
@@ -28,11 +24,7 @@ public class Track {
     public Track(String name, String filePath, Context context) {
         this.filePath = filePath;
         this.name = name.substring(0, name.indexOf('.'));
-        this.duration = calculatePlaytime(context);
-
-
-        // TODO
-        // getArtist --> if none; UNKNOWN ARTIST
+        this.durationInMilliseconds = calculatePlaytime(context);
     }
 
     // ==================================
@@ -43,32 +35,28 @@ public class Track {
         return name;
     }
 
-    public String getArtist() {
-        return artist;
-    }
-
     public String getFilePath() {
         return filePath;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getDurationInMilliseconds() {
+        return durationInMilliseconds;
     }
 
     // ==================================
-    // == OTHER USEFUL METHODS ==========
+    // == FUNCTIONALITY METHODS ==========
     // ==================================
 
-    public int calculatePlaytime(Context context) {
-
+    // Parameters: (Context) context.
+    // Description: Calculates the playtime of the track.
+    private int calculatePlaytime(Context context) {
         MediaPlayer mediaPlayer = MediaPlayer.create(context, Uri.parse(filePath));
         int calculatedDuration = mediaPlayer.getDuration();
         mediaPlayer.release();
         return calculatedDuration;
-
     }
 
-    // Parameters: (long) milliseconds.
+    // Parameters: (int) milliseconds.
     // Description: Returns a formatted string MM:SS.
     static public String formatMilliseconds(int milliseconds) {
         int minutes, seconds, hours;
@@ -93,16 +81,13 @@ public class Track {
 
 
             }
-            // mm:ss
             else {
                 formattedText += minutes + ":";
             }
         }
         else {
             formattedText += "0:";
-
         }
-
         if (seconds < 10) {
             formattedText += "0";
         }

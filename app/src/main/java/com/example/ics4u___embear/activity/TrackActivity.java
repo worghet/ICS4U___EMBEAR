@@ -1,38 +1,49 @@
+// == FILE PACKAGE =========================
 package com.example.ics4u___embear.activity;
 
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-
-import com.example.ics4u___embear.R;
-import com.example.ics4u___embear.SharedObjects;
+// == IMPORTS ======================================
 import com.example.ics4u___embear.TrackOverListener;
+import com.example.ics4u___embear.SharedObjects;
+import androidx.appcompat.app.AppCompatActivity;
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.data.Track;
+import androidx.core.view.WindowCompat;
+import com.example.ics4u___embear.R;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.SeekBar;
+import android.os.Handler;
+import android.os.Bundle;
+import android.view.View;
+
 
 import java.io.IOException;
 
-
+// == PLAYLIST SCREEN =============================================================
 public class TrackActivity extends AppCompatActivity implements TrackOverListener {
 
-    TextView trackNameView, onOffBox, totalTimeBox, currentTimeBox;
+    // ==================================
+    // == CLASS VARIABLES [FIELDS] =====
+    // ==================================
+
+    TextView trackNameView, totalTimeBox, currentTimeBox;
     SeekBar durationSeekbar;
     TrackPlayer trackPlayer = SharedObjects.trackPlayer;
     ImageButton togglePlaying;
 
+    // ==================================
+    // == SCREEN BUILDER (ON_CREATE) ====
+    // ==================================
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Default layout creation.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track);
         clearSystemUI();
+
+        // Initialize the modifiable views.
         trackNameView = findViewById(R.id.trackNameView);
         totalTimeBox = findViewById(R.id.totalTime);
         currentTimeBox = findViewById(R.id.currentTime);
@@ -40,17 +51,18 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         togglePlaying = findViewById(R.id.togglePlaying);
         togglePlaying.setTag(R.drawable.pause_track);
 
-        trackPlayer.addTrackOverListener(this); // TODO set listeners everywhere?
+        // Register this activity as a 'track-ends' listener.
+        trackPlayer.addTrackOverListener(this);
 
-
-        // remove device ui
-        try {
-            renderAudioData();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // Display Track data.
+        try { renderTrackData(); }
+        catch (IOException e) { throw new RuntimeException(e); }
 
     }
+
+    // ==================================
+    // == UI HELPER METHODS =============
+    // ==================================
 
     // Parameters: None.
     // Description: Gets rid of SYSTEM UI.
@@ -69,29 +81,36 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    //
-    private void renderAudioData() throws IOException {
+    // Parameters: None.
+    // Description: Sets the text views to the data of the currently playing track.
+    private void renderTrackData() throws IOException {
         trackNameView.setText(trackPlayer.getTrackPlaying().getName());
-        totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDuration()));
-        // TODO REMOVE INTENT
+        totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDurationInMilliseconds()));
         initializeSeekbar();
     }
 
+    public void goBack(View view) {
+        finish();
+    }
 
-    // TRACK PLAYER CONTROLS ---------------------------------------------
+    // ==================================
+    // == TRACK CONTROL METHODS =========
+    // ==================================
 
-
-    // how do i make this UNIVERSAL?
+    // Parameters: None..?
+    // Description: Sets all the seekbar values and functions.
     public void initializeSeekbar() {
-        durationSeekbar.setMin(0);
-        durationSeekbar.setMax(trackPlayer.getTrackPlaying().getDuration());
-        durationSeekbar.setProgress(trackPlayer.getCurrentPosition());
-        durationSeekbar.setKeyProgressIncrement(1);
 
-        // Initialize the currentTimeBox with the current progress of the seekbar
+        // Set basic things: minimum, maximum values, increments, and current progress.
+        durationSeekbar.setMin(0);
+        durationSeekbar.setMax(trackPlayer.getTrackPlaying().getDurationInMilliseconds());
+        durationSeekbar.setKeyProgressIncrement(1);
+        durationSeekbar.setProgress(trackPlayer.getCurrentPosition());
+
+        // Initialize the currentTimeBox with the current progress of the seekbar.
         currentTimeBox.setText(Track.formatMilliseconds(durationSeekbar.getProgress()));
 
-        // Create a Handler to update the SeekBar and currentTimeBox every second
+        // Create a Handler to update the SeekBar and currentTimeBox every second.
         Handler handler = new Handler();
         Runnable updateRunnable = new Runnable() {
             @Override
@@ -138,13 +157,15 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         });
     }
 
-
+    // Parameters: (View) Object which called this method.
+    // Description: Toggles the playing of the track.
     public void togglePlaying(View view) {
-        trackPlayer.togglePlaying();
-//        onOffBox.setText(audioPlayer.isPlaying());
 
+        // Perform the toggle. (Might want to rename this method..)
+        trackPlayer.togglePlaying();
+
+        // Change the icon to pause if playing, playing if pause.
         if ((Integer) togglePlaying.getTag() == R.drawable.pause_track) {
-            // pauses
             togglePlaying.setImageResource(R.drawable.play_track);
             togglePlaying.setBackgroundResource(R.drawable.play_track);
             togglePlaying.setTag(R.drawable.play_track);
@@ -153,38 +174,34 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
             togglePlaying.setImageResource(R.drawable.pause_track);
             togglePlaying.setBackgroundResource(R.drawable.pause_track);
             togglePlaying.setTag(R.drawable.pause_track);
-
         }
-
-//        if (togglePlaying.getimageTa() = R.drawable.pause_track) {
-//            togglePlaying.setImage(R.drawable.play_track)
-//        } else {
-//            togglePlaying.setImage(R.drawable.pause_track)
-//        }
-//        onOffBox.setText("");
-
-
     }
 
-
+    // Parameters: (View) Object which called this method.
+    // Description: Plays the next track in the queue.
     public void playNext(View view) throws IOException {
         trackPlayer.playNextInQueue(this);
-        renderAudioData();
+        renderTrackData();
     }
 
+    // Parameters: (View) Object which called this method.
+    // Description: Plays the previous track in the queue.
     public void playPrevious(View view) throws IOException {
         trackPlayer.playPreviousInQueue(this);
-        renderAudioData();
+        renderTrackData();
     }
 
-    // GO BACK
+    // ==================================
+    // == BACKGROUND UPDATER METHODS ====
+    // ==================================
 
-    public void goBack(View view) {
-        finish();
-    }
-
+    // Parameters: None.
+    /** EXPLANATION:
+     When an activity is opened, it sets the current activity in to a paused state.
+     This method performs an action when it is unpaused (resumed); when the screen is returned to.
+     */
     @Override
     public void updateTrackUI() throws IOException {
-        renderAudioData();
+        renderTrackData();
     }
 }

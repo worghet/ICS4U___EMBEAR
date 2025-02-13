@@ -1,53 +1,33 @@
-// == FILE LOCATION ===============
+// == FILE PACKAGE =====================
 package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * PLAYDATA CLASS:
- * This is a data object responsible for the storage of all data used in the application.
- */
+// == PLAYDATA ========
 public class PlayData {
 
-    public static PlayData playData; // shared between activities;   TODO don't
+    public static PlayData playData; // shared between activities;   TODO don't touch TODO move to sharedObjects
 
     // ==================================
     // == CLASS VARIABLES [FIELDS] =====
     // ==================================
 
-    // List of all playlists.
     private List<Playlist> allPlaylists = new ArrayList<>();
 
-    // Because this is a singleton class, it holds its own object.
-    // private static PlayData playData = generateDemoPlayData();
-
     // ==================================
-    // == CONSTRUCTORS ==================
+    // == MUTATOR METHODS ===========
     // ==================================
 
-    // TEMPORARY: WILL REPLACE WITH DEFAULT CONSTRUCTOR AFTER
-    private static PlayData generateDemoPlayData() {
-        PlayData demoData = new PlayData();
-
-        Playlist playlist1 = new Playlist("PLAYLIST #1");
-        demoData.allPlaylists.add(playlist1);
-
-        return demoData;
-    }
-
-    // ==================================
-    // == MANIPULATOR METHODS ===========
-    // ==================================
-
-    // Parameters: (Playlist) playlist
+    // Parameters: (Playlist) playlist.
     // Description: Adds given playlist to list of playlists.
     public void addPlaylist(Playlist playlist) {
         allPlaylists.add(playlist);
     }
 
+    // Parameters: (Playlist) playlist.
+    // Description : Removes the given playlist from the list of playlists.
     public void removePlaylist(Playlist playlist) {
         allPlaylists.remove(playlist);
     }

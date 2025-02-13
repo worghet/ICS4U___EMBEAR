@@ -2,57 +2,49 @@
 [NAME] ----- BUSHKOV
 [TASK] CODE REVIEW (ICS4U-01)
 [DATE] 02 / 10 / 2025
-[DESCRIPTION] Local audio organizer and player.
+[DESCRIPTION] Local audio file organizer and player.
  */
 
-// == FILE LOCATION ===============
+// == FILE PACKAGE =========================
 package com.example.ics4u___embear.activity;
 
-// == IMPORTS ==================================
-
+// == IMPORTS ======================================
+import com.example.ics4u___embear.TrackOverListener;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.example.ics4u___embear.SharedObjects;
+import com.example.ics4u___embear.data.Playlist;
+import com.example.ics4u___embear.data.PlayData;
 import android.graphics.drawable.ColorDrawable;
-
+import com.example.ics4u___embear.TrackPlayer;
+import com.example.ics4u___embear.FileManager;
+import com.example.ics4u___embear.data.Track;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
-
-import android.os.Handler;
+import com.example.ics4u___embear.R;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.SeekBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.widget.Button;
 import android.widget.Toast;
+import java.io.IOException;
+import android.os.Handler;
 import android.view.View;
 import android.os.Bundle;
-
-import com.example.ics4u___embear.FileManager;
-import com.example.ics4u___embear.R;
-import com.example.ics4u___embear.SharedObjects;
-import com.example.ics4u___embear.TrackOverListener;
-import com.example.ics4u___embear.TrackPlayer;
-import com.example.ics4u___embear.data.PlayData;
-import com.example.ics4u___embear.data.Playlist;
-import com.example.ics4u___embear.data.Track;
-
-
 import java.io.File;
-import java.io.IOException;
 
-
-// == PLAYLISTS SCREEN ==============================
+// == PLAYLISTS SCREEN ===========================================================
 public class MainActivity extends AppCompatActivity implements TrackOverListener {
 
     // ==================================
-    // == CLASS VARIABLES [FIELDS] =====
+    // == CLASS VARIABLES [FIELDS] ======
     // ==================================
 
-    TextView textOutput;
-    PlayData playData;
-    TrackPlayer trackPlayer = SharedObjects.trackPlayer;
+    private PlayData playData;
+    private TrackPlayer trackPlayer = SharedObjects.trackPlayer;
 
     // ==================================
     // == SCREEN BUILDER (ON_CREATE) ====
@@ -66,12 +58,13 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         setContentView(R.layout.activity_main);
         clearSystemUI();
 
-        // Check that file exists; read from it if it does.
-//        textOutput = findViewById(R.id.textOutput);
+        // Register this activity as a 'track-ends' listener.
+        trackPlayer.addTrackOverListener(this);
 
-        // make file exist
+        // Load PlayData if there is anything saved.
         catchDataOnOpen();
 
+        // Make each playlist into a button.
         renderPlaylistButtons();
 
     }
@@ -80,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     // == UI HELPER METHODS =============
     // ==================================
 
-    // TODO: CHANGE COMPOSITION OF BUTTONS (INCLUDES REMOVE, NAME, ETC).
+    // TODO: CHANGE COMPOSITION OF BUTTONS (INCLUDES REMOVE, NAME, ETC). | CARDVIEW?
     // Parameters: None.
     // Description: Loads all Playlists as buttons onto the screen.
     public void renderPlaylistButtons() {
@@ -97,19 +90,22 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             // For convenience: copy the playlist here.
             Playlist playlist = playData.getPlaylist(playlistIndex);
 
+            // =================================================
+            // == PLAYLIST BUTTON CREATION =====================
+            // =================================================
+
             // Create a button dedicated to this playlist.
             Button playlistButton = new Button(this);
 
             // Set the button text as the playlist name.
             playlistButton.setText(playlist.getName());
 
+            // Set up a listener which will redirect the user to that playlist.
             int carryablePlaylistIndex = playlistIndex;
             playlistButton.setOnClickListener(view -> {
                 Intent intent = new Intent(this, PlaylistActivity.class);
                 intent.putExtra("PLAYLIST_INDEX", carryablePlaylistIndex);
-//                intent.putExtra("PLAYLIST")
                 startActivity(intent);
-//                overridePendingTransition(R.anim., R.anim.fade_in);
             });
 
             // Add the button to the container layout
@@ -138,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     // == FUNCTIONALITY METHODS =========
     // ==================================
 
-    // Parameters: None.
+    // TODO: recolor dis
+    // Parameters: (View) Object which called this method.
     // Description: Makes a popup which requests a name for the new playlist.
     public void addPlaylistToPlayData(View view) {
 
@@ -165,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         // ------------------------------------|
 
         // When the add button is pressed.
-        // TODO: MAKE UNCLICKABLE FOR CERTAIN CONDITIONS?
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
 
             // Read what is in the entered line.
@@ -176,55 +172,61 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             // Check if String entered is empty.
             if (!newPlaylistName.isEmpty()) {
 
-                // TODO CHECK THAT THE PLAYLIST NAME DOESNT ALREADY EXIST
+                // Compare the new name with all of the existing names.
+                boolean nameHasBeenUsed = false;
+                for (int playlistIndex = 0; playlistIndex < playData.getNumPlaylists(); playlistIndex++) {
+                    if (newPlaylistName.equals(playData.getPlaylist(playlistIndex))) {
+                        nameHasBeenUsed = true;
+                        break;
+                    }
+                }
 
-                // Add the new playlist to playData.
-                playData.addPlaylist(new Playlist(newPlaylistName));
+                // If it hasn't been used, make the new playlist.
+                if (!nameHasBeenUsed) {
 
-                File file = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
+                    // Add the new playlist to playData.
+                    playData.addPlaylist(new Playlist(newPlaylistName));
 
-                FileManager.savePlayData(playData);
+                    File file = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
 
-                renderPlaylistButtons();
+                    FileManager.savePlayData(playData);
 
+                    renderPlaylistButtons();
 
-               // FileManager.savePlayData(this, playData);
-                // SAVE PLAYDATA
-//                File file = getFileStreamPath(FileManager.PLAYDATA_FILE); // file in the app context storage dir (ONLY INSTANFCE OF CONTEXT NEED FOR FILE)
+                }
+                // If the name has been used; do nothing.
+                else {
+                    Toast errorPopup = new Toast(this);
+                    errorPopup.setText("ERROR: NAME ALREADY USED");
+                    errorPopup.show();
+                }
 
-
-            } else {
+            }
+            else {
                 Toast errorPopup = new Toast(this);
-                errorPopup.setText("FAILED TO CREATE: EMPTY NAME GIVEN");
+                errorPopup.setText("ERROR: EMPTY NAME GIVEN");
                 errorPopup.show();
             }
         }));
 
-
-
         // when cancel is pressed
         popupBuilder.setNegativeButton("CANCEL", null);
 
-
+        // Build the popup itself.
         AlertDialog popup = popupBuilder.create();
 
-//        LayoutInflater inflater = getLayoutInflater();
-//View customView = inflater.inflate(R.layout.custom_dialog_layout, null);
-//requestPopup.setView(customView);
-
-        // show it (theres a method in builder too which just creates in it
+        // Display the popup to the user.
         popup.show();
 
         // modifications to popup must occur after it is shown
         popup.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
         popup.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(Color.BLACK);
-//        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setRa
         popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
     }
 
     // Parameters: None.
     // Description: Load playData from file (if exists). Otherwise, make it empty.
-    public void catchDataOnOpen() {
+    private void catchDataOnOpen() {
 
         // Get file using context of Activity; save it in the FileManager class.
         FileManager.PLAYDATA_FILE = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
@@ -235,53 +237,59 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         // If the file does not exist; assign empty one.
         else { playData = new PlayData(); }
 
-        // Set local playData to universal one.
-        // TODO access universal always
-        PlayData.playData = playData;
+        PlayData.playData = playData; // TODO globalize ts
     }
 
-    // ----------------------------------------------------
+    // ==================================
+    // == TRACKPLAYER METHODS ===========
+    // ==================================
 
-
-    // seekbar
-
+    // Parameters: (View) Object which called this method.
+    // Description: Toggles the playing of the track.
     public void togglePlaying(View view) {
-        trackPlayer.togglePlaying();
-//        onOffBox.setText(audioPlayer.isPlaying());
-//        if (togglePlaying.getText().equals(">")) {
-//            togglePlaying.setText("| |");
-//        }
-//        else {
-//            togglePlaying.setText(">");
-//        }
-////        onOffBox.setText("");
-//
 
+        // Perform the toggle.
+        trackPlayer.togglePlaying();
+
+        // Change the icon.
+//        view = (ImageButton) view;
+//        CHECK TAG
+//        ((ImageButton) view).setImageResource();
+//        view.setBackgroundResource();
     }
 
-
+    // Parameters: (View) Object which called this method.
+    // Description: Plays the next track in the queue.
     public void playNext(View view) throws IOException {
         trackPlayer.playNextInQueue(this);
-//        renderAudioData();
     }
 
+    // Parameters: (View) Object which called this method.
+    // Description: Plays the previous track in the queue.
     public void playPrevious(View view) {
 
     }
 
+    // ==================================
+    // == BACKGROUND UPDATER METHODS ====
+    // ==================================
+
+    // Parameters: None.
+    // Description: Will perform an action when it receives a "end track" signal from the trackPlayer.
     @Override
     public void updateTrackUI() throws IOException {
-        // update player
+        //
     }
 
-// ----------------------------------------------------
-
+    // Parameters: None.
+    /** EXPLANATION:
+    When an activity is opened, it sets the current activity in to a paused state.
+    This method performs an action when it is unpaused (resumed); when the screen is returned to.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         renderPlaylistButtons();
     }
-
-
 
 }

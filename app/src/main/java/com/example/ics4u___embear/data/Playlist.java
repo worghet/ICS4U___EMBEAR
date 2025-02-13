@@ -1,13 +1,10 @@
-// == FILE LOCATION ===============
+// == FILE PACKAGE =====================
 package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
-
 import java.util.ArrayList;
 
-/** PLAYLIST CLASS:
- * This is a data object responsible for playlist data: naming, as well as the tracks inside.
- */
+// == PLAYLIST ========
 public class Playlist {
 
     // ==================================
@@ -16,7 +13,7 @@ public class Playlist {
 
     private String name;
     private ArrayList<Track> allTracks;
-//    private image icon
+//    TODO private image icon
 
     // ==================================
     // == CONSTRUCTORS ==================
@@ -46,9 +43,10 @@ public class Playlist {
     public int getPlaylistPlayTime() {
 
         int totalPlayTime = 0;
-        // iterate through each audio, take sum.. format it
+
+        // Iterate through each track, take sum; format it.
         for (Track track : allTracks) {
-            totalPlayTime += track.getDuration();
+            totalPlayTime += track.getDurationInMilliseconds();
         }
 
         return totalPlayTime;
