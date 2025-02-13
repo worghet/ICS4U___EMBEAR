@@ -155,51 +155,58 @@ public class TrackPlayer extends MediaPlayer { // extends MediaPlayer..?
     }
 
     public void playNextInQueue(Context context) throws IOException {
-        if ((queue.length - 1) == currentTrackIndex) {
-            Log.d("LOOPER", "checking looping status!");
-            if (queueLooping) {
-                Log.d("LOOPER", "trying to loop!");
-                if (isShuffle) {
-                    generateShuffleQueue(playingFrom);
-                }
-                startPlayingQueue(context);
-            }
+        if (queue != null) {
 
-        }
-        else {
-            currentTrackIndex++;
-            playTrack(context, queue[currentTrackIndex]);
-
-            this.setOnCompletionListener(mp -> {
-                try {
-                    playNextInQueue(context);
-                    for (TrackOverListener trackOverListener : allTrackOverListeners) {
-
-                        trackOverListener.updateTrackUI();
+            if ((queue.length - 1) == currentTrackIndex) {
+                Log.d("LOOPER", "checking looping status!");
+                if (queueLooping) {
+                    Log.d("LOOPER", "trying to loop!");
+                    if (isShuffle) {
+                        generateShuffleQueue(playingFrom);
                     }
-                    Log.d("UPDATING TRACK UI NATURALLY", "tapping it now..");
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    startPlayingQueue(context);
                 }
-            });
+
+            }
+            else {
+                currentTrackIndex++;
+                playTrack(context, queue[currentTrackIndex]);
+
+                this.setOnCompletionListener(mp -> {
+                    try {
+                        playNextInQueue(context);
+                        for (TrackOverListener trackOverListener : allTrackOverListeners) {
+
+                            trackOverListener.updateTrackUI();
+                        }
+                        Log.d("UPDATING TRACK UI NATURALLY", "tapping it now..");
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         }
 
     }
 
     public void playPreviousInQueue(Context context) throws IOException {
-        if (currentTrackIndex > 0) {
-            currentTrackIndex--;
-            playTrack(context, queue[currentTrackIndex]);
+        if (queue != null) {
 
-            this.setOnCompletionListener(mp -> {
-                try {
-                    playNextInQueue(context);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            if (currentTrackIndex > 0) {
+                currentTrackIndex--;
+                playTrack(context, queue[currentTrackIndex]);
+
+                this.setOnCompletionListener(mp -> {
+                    try {
+                        playNextInQueue(context);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         }
+
 
     }
 

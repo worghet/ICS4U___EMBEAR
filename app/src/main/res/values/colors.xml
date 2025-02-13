@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="tepapa">#1d343a</color>
+    <color name="pickled">#2d4953</color>
+    <color name="bayao">#4b6772</color>
+    <color name="lynch">#6a7f95</color>
+    <color name="cadet">#b1b7c4</color>
+
 </resources>

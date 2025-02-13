@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.R;
@@ -42,6 +43,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+        clearSystemUI();
 
         trackPlayer.addTrackOverListener(this); // TODO set listeners everywhere?
 
@@ -50,6 +52,23 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         playlistContentData = findViewById(R.id.totalDuration);
 
         renderPlaylistData();
+    }
+
+    // Parameters: None.
+    // Description: Gets rid of SYSTEM UI.
+    private void clearSystemUI() {
+
+        // [CLARITY] Gets rid of the top status bar.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // [CLARITY] Gets rid of the bottom navigation bar.
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     private void renderPlaylistData() {
@@ -110,8 +129,6 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     public void goToFullscreenTrackPlayer(View view) {
         if (trackPlayer.isPlaying()) {
             Intent intent = new Intent(this, TrackActivity.class);
-            intent.putExtra("AUDIO_NAME", trackPlayer.getTrackPlaying().getName());
-            intent.putExtra("AUDIO_LENGTH", trackPlayer.getTrackPlaying().getDuration());
             startActivity(intent);
         }
     }

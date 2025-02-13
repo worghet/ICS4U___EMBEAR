@@ -7,81 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <Button
-        android:id="@+id/makeDemo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="163dp"
-        android:onClick="showFileContents"
-        android:text="SHOW FILE CONTENTS"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.778" />
-
-    <TextView
-        android:id="@+id/textOutput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="THIS IS A TEXTVIEW"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.842" />
-
-    <Button
-        android:id="@+id/toggleSong"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PLAY/PAUSE"
-        app:layout_constraintBottom_toTopOf="@+id/makeDemo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.288" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="218dp"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/toggleSong"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.688" />
-
-    <TextView
-        android:id="@+id/song_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="OFF"
-        app:layout_constraintBottom_toTopOf="@+id/toggleSong"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
-
     <ScrollView
         android:id="@+id/playlistContainer"
-        android:layout_width="409dp"
-        android:layout_height="206dp"
+        android:layout_width="410dp"
+        android:layout_height="534dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/makeDemo"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.806">
+        app:layout_constraintVertical_bias="0.99">
 
         <LinearLayout
             android:id="@+id/playlistContainerLayout"
@@ -96,12 +34,42 @@
         android:layout_height="wrap_content"
         android:onClick="addPlaylistToPlayData"
         android:text="MAKE PLAYLIST"
-        app:layout_constraintBottom_toTopOf="@+id/makeDemo"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.967" />
+        app:layout_constraintVertical_bias="0.125" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EMBEAR"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toTopOf="@+id/playlistContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.913"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.315" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TODO:UI, icons/artists, looing individual song; error checking"
+        app:layout_constraintBottom_toTopOf="@+id/playlistContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.954" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="left" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

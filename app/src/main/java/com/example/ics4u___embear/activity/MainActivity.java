@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         clearSystemUI();
 
         // Check that file exists; read from it if it does.
-        textOutput = findViewById(R.id.textOutput);
+//        textOutput = findViewById(R.id.textOutput);
 
         // make file exist
         catchDataOnOpen();

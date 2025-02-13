@@ -1,15 +1,16 @@
 package com.example.ics4u___embear.activity;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
 import com.example.ics4u___embear.R;
 import com.example.ics4u___embear.SharedObjects;
@@ -20,28 +21,27 @@ import com.example.ics4u___embear.data.Track;
 import java.io.IOException;
 
 
-import com.example.ics4u___embear.TrackPlayer;
-
-
 public class TrackActivity extends AppCompatActivity implements TrackOverListener {
 
-    TextView audioNameBox, onOffBox, totalTimeBox, currentTimeBox;
+    TextView trackNameView, onOffBox, totalTimeBox, currentTimeBox;
     SeekBar durationSeekbar;
     TrackPlayer trackPlayer = SharedObjects.trackPlayer;
-    Button togglePlaying;
+    ImageButton togglePlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track);
-
-        audioNameBox = findViewById(R.id.audioName);
-//        onOffBox = findViewById(R.id.playingStatus);
+        clearSystemUI();
+        trackNameView = findViewById(R.id.trackNameView);
         totalTimeBox = findViewById(R.id.totalTime);
         currentTimeBox = findViewById(R.id.currentTime);
         durationSeekbar = findViewById(R.id.progressDuration);
         togglePlaying = findViewById(R.id.togglePlaying);
+        togglePlaying.setTag(R.drawable.pause_track);
+
         trackPlayer.addTrackOverListener(this); // TODO set listeners everywhere?
+
 
         // remove device ui
         try {
@@ -49,20 +49,31 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        try {
-////            audioPlayer.playSong(audio);
-//            Log.d("AudioActivity", "started playing" + audio.getName());
-//        } catch (Exception e) {
-//            Log.d("AudioActivity", "couldnt play" + audio.getName());
-//        }
 
+    }
+
+    // Parameters: None.
+    // Description: Gets rid of SYSTEM UI.
+    private void clearSystemUI() {
+
+        // [CLARITY] Gets rid of the top status bar.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // [CLARITY] Gets rid of the bottom navigation bar.
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     //
     private void renderAudioData() throws IOException {
-        audioNameBox.setText(trackPlayer.getTrackPlaying().getName());
+        trackNameView.setText(trackPlayer.getTrackPlaying().getName());
         totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDuration()));
-        // remove intent from other activities
+        // TODO REMOVE INTENT
         initializeSeekbar();
     }
 
@@ -131,11 +142,25 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
     public void togglePlaying(View view) {
         trackPlayer.togglePlaying();
 //        onOffBox.setText(audioPlayer.isPlaying());
-        if (togglePlaying.getText().equals(">")) {
-            togglePlaying.setText("| |");
-        } else {
-            togglePlaying.setText(">");
+
+        if ((Integer) togglePlaying.getTag() == R.drawable.pause_track) {
+            // pauses
+            togglePlaying.setImageResource(R.drawable.play_track);
+            togglePlaying.setBackgroundResource(R.drawable.play_track);
+            togglePlaying.setTag(R.drawable.play_track);
         }
+        else {
+            togglePlaying.setImageResource(R.drawable.pause_track);
+            togglePlaying.setBackgroundResource(R.drawable.pause_track);
+            togglePlaying.setTag(R.drawable.pause_track);
+
+        }
+
+//        if (togglePlaying.getimageTa() = R.drawable.pause_track) {
+//            togglePlaying.setImage(R.drawable.play_track)
+//        } else {
+//            togglePlaying.setImage(R.drawable.pause_track)
+//        }
 //        onOffBox.setText("");
 
 
