@@ -9,7 +9,11 @@ import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.data.Track;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
+
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.SeekBar;
 import android.os.Handler;
@@ -27,6 +31,8 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
     // ==================================
 
     TextView trackNameView, totalTimeBox, currentTimeBox;
+    TextView trackArtistNameView;
+    ImageView trackIconView;
     SeekBar durationSeekbar;
     TrackPlayer trackPlayer = SharedObjects.trackPlayer;
     ImageButton togglePlaying;
@@ -45,6 +51,9 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
 
         // Initialize the modifiable views.
         trackNameView = findViewById(R.id.trackNameView);
+        trackArtistNameView = findViewById(R.id.artistNameView);
+        trackIconView = findViewById(R.id.trackIconView);
+
         totalTimeBox = findViewById(R.id.totalTime);
         currentTimeBox = findViewById(R.id.currentTime);
         durationSeekbar = findViewById(R.id.progressDuration);
@@ -84,8 +93,12 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
     // Parameters: None.
     // Description: Sets the text views to the data of the currently playing track.
     private void renderTrackData() throws IOException {
-        trackNameView.setText(trackPlayer.getTrackPlaying().getName());
+        trackNameView.setText(trackPlayer.getTrackPlaying().getTrackName());
+        trackArtistNameView.setText(trackPlayer.getTrackPlaying().getArtistName());
         totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDurationInMilliseconds()));
+
+        trackIconView.setImageBitmap(trackPlayer.getTrackPlaying().getIconFromMetadata(this));
+
         initializeSeekbar();
     }
 

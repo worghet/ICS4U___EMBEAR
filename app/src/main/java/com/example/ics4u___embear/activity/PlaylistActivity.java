@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import android.provider.OpenableColumns;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
+
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.database.Cursor;
@@ -38,7 +40,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
     private static final int REQUEST_AUDIO_PICK = 2;
     private TrackPlayer trackPlayer = SharedObjects.trackPlayer;
-    private TextView playlistName, playlistContentData;
+    private TextView playlistNameView, numberOfTracksView, playTimeView;
     private Playlist playlist;
 
     // ==================================
@@ -60,8 +62,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         trackPlayer.addTrackOverListener(this);
 
         // Initialize the modifiable views.
-        playlistName = findViewById(R.id.playlistName);
-        playlistContentData = findViewById(R.id.totalDuration);
+        playlistNameView = findViewById(R.id.playlistName);
+        numberOfTracksView = findViewById(R.id.numberOfTracksView);
+        playTimeView = findViewById(R.id.playTimeView);
         // TODO add scrollbar here?
 
         // Display the playlist data.
@@ -94,10 +97,12 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     private void renderPlaylistData() {
 
         // Display the number of tracks in playlist, and the total time of the playlist.
-        playlistContentData.setText(playlist.getNumberOfTracks() + " TRACKS | " + Track.formatMilliseconds(playlist.getPlaylistPlayTime()) + " TOTAL");
+//        playlistContentData.setText(playlist.getNumberOfTracks() + " TRACKS | " + Track.formatMilliseconds(playlist.getPlaylistPlayTime()) + " TOTAL");
+        numberOfTracksView.setText(String.valueOf(playlist.getNumberOfTracks()) + " TRACKS");
+        playTimeView.setText(Track.formatMilliseconds(playlist.getPlaylistPlayTime()));
 
         // Display the playlist name.
-        playlistName.setText(playlist.getName());
+        playlistNameView.setText(playlist.getName());
 
         // TODO Card Layout.
         LinearLayout trackContainer = findViewById(R.id.audioContainerLayout);
@@ -106,7 +111,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         trackContainer.removeAllViews();
 
         // Load the container with the tracks.
-        for (int trackIndex = 0; trackIndex < playlist.getNumTracks(); trackIndex++) {
+        for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
 
 
             LinearLayout trackAndDeleteContainer = new LinearLayout(this);
@@ -116,7 +121,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
 
             Button trackButton = new Button(this);
-            trackButton.setText(playlist.getAllTracks().get(trackIndex).getName());
+            trackButton.setText(playlist.getAllTracks().get(trackIndex).getTrackName());
             // Add click listener if needed to play the audio
 
             int carryableTrackIndex = trackIndex;
@@ -202,13 +207,11 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
                     // Create Audio object and add to playlist
                     Track trackToAdd = new Track(fileName, trackUri.toString(), this);
-
-                    // TODO possibly add getIcon or sum
-//                    audioToAdd.intializeMetadata(this, Uri.parse(audioToAdd.getFilePath()));
-
                     playlist.addTrack(trackToAdd);
                 }
             } else if (data.getData() != null) {
+
+
                 // Single file selected
                 Uri trackUri = data.getData(); // Get the selected file URI
 
@@ -220,11 +223,15 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
                 // Create Audio object and add to playlist
                 Track trackToAdd = new Track(fileName, trackUri.toString(), this);
+
                 playlist.addTrack(trackToAdd);
             }
 
             // Update playData, refresh UI.
+
             FileManager.savePlayData(PlayData.playData);
+            Log.d("saved", "saved");
+
             renderPlaylistData();
         }
     }

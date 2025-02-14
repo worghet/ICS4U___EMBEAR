@@ -8,6 +8,11 @@
         <item name="colorPrimary">@color/tepapa</item>
     </style>
 
+    <style name="roundedTrack">
+        <item name="cornerSize">10%</item>
+        <item name="android:tint">@color/bayao</item>
+    </style>
+
     <style name="backButton" parent="Widget.AppCompat.Button">
         <item name="android:textAllCaps">false</item>
         <item name="android:backgroundTint">#ffffff</item>

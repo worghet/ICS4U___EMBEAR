@@ -5,45 +5,208 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/tepapa"
     tools:context=".activity.PlaylistActivity">
 
-    <TextView
-        android:id="@+id/playlistName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PLAYLISTNAME\"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.76"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.079" />
 
-    <Button
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="57dp"
-        android:onClick="goBack"
-        android:text="BACK"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.092"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+    <!--    BUFFER FOR UI -->
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/pickled"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <Button
+            android:id="@+id/addAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addAudioFile"
+            android:text="ADD AUDIO"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.903"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.185" />
+    </LinearLayout>
+
+    
+<!--    PLAYLIST DATA-->
+    <LinearLayout
+        android:id="@+id/linearLayout9"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/pickled"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/no_playlist_icon"
+
+                />
+
+        </LinearLayout>
+
+<!--        DATA -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingEnd="20dp">
+
+
+
+
+<!--            BUFFER-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"/>
+
+<!--            TITLE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:gravity="bottom">
+
+                <TextView
+                    android:id="@+id/playlistName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PLAYLIST"
+                    android:textColor="@color/cadet"
+                    android:textSize="32dp"
+                    android:textStyle="bold"
+
+                 />
+
+            </LinearLayout>
+
+<!--            TIME AND NUM TRACKS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/number_of_tracks"
+                    />
+
+                <TextView
+                    android:id="@+id/numberOfTracksView"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="7dp"
+                    android:gravity="center_vertical"
+                    android:text="89 TRACKS"
+                    android:textColor="@color/cadet"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/listening_time"
+                    />
+
+                <TextView
+                    android:id="@+id/playTimeView"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:text="HH:MM:SS"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="7dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/cadet"/>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginStart="20dp"
+            android:layout_width="50dp"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
+        </LinearLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/totalDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="PLAYTIME"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.831"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playlistName"
+            app:layout_constraintVertical_bias="0.011" />
+    </LinearLayout>
+
+<!--    QUEUE OPTIONS -->
+
+    <LinearLayout
+        android:id="@+id/linearLayout10"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/cadet"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
+
+
+        <Button
+            android:id="@+id/play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="playInOrder"
+            android:text="PLAY" />
+
+        <Button
+            android:id="@+id/shuffle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="playShuffle"
+            android:text="SHUFFLE" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LOOP"/>
+
+    </LinearLayout>
+
+
 
     <ScrollView
         android:id="@+id/audioContainer"
         android:layout_width="407dp"
-        android:layout_height="580dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playlistName"
-        app:layout_constraintVertical_bias="0.994">
+        android:layout_height="536dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10"
+      >
 
         <LinearLayout
             android:id="@+id/audioContainerLayout"
@@ -52,95 +215,5 @@
             android:orientation="vertical" />
     </ScrollView>
 
-    <Button
-        android:id="@+id/addAudio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="addAudioFile"
-        android:text="ADD AUDIO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.903"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.185" />
 
-    <TextView
-        android:id="@+id/totalDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:text="PLAYTIME"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.831"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playlistName"
-        app:layout_constraintVertical_bias="0.011" />
-
-    <Button
-        android:id="@+id/renamePlaylist"
-        android:layout_width="91dp"
-        android:layout_height="47dp"
-        android:onClick="renamePlaylist"
-        android:text="ren"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.089"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.232" />
-
-    <Button
-        android:id="@+id/openAudioActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:onClick="goToFullscreenTrackPlayer"
-        android:text="OPEN FULLSCREEN"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.881"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.233" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="91dp"
-        android:layout_height="45dp"
-        android:onClick="deletePlaylist"
-        android:text="del"
-        app:layout_constraintBottom_toTopOf="@+id/renamePlaylist"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.093"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.929" />
-
-    <Button
-        android:id="@+id/play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="playInOrder"
-        android:text="PLAY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.399"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.311" />
-
-    <Button
-        android:id="@+id/shuffle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="playShuffle"
-        android:text="SHUFFLE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.907"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.31" />
 </androidx.constraintlayout.widget.ConstraintLayout>

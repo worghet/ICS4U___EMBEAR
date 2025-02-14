@@ -44,13 +44,6 @@
             android:onClick="goBack"
             android:scaleType="fitCenter"
             android:src="@drawable/chevron_down"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.173"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.254"
             tools:ignore="ContentDescription" />
 
 
@@ -81,10 +74,14 @@
 
 
         <!-- ImageView inside the LinearLayout -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/trackIconView"
+            android:scaleType="fitCenter"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:src="@drawable/no_icon" />
+            android:src="@drawable/no_track_icon"
+            app:shapeAppearance="@style/roundedTrack"
+            />
 
     </LinearLayout>
 
@@ -92,8 +89,9 @@
     <LinearLayout
         android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_margin="0dp"
+        android:orientation="vertical"
         android:gravity="center_vertical"
         android:padding="0dp"
 
@@ -103,12 +101,21 @@
 
         <TextView
             android:id="@+id/trackNameView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SAMPLE TRACK NAME"
             android:textColor="@color/cadet"
             android:textSize="28dp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/artistNameView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="17dp"
+            android:text="ARTIST SAMPLE NAME"
+            android:textColor="@color/bayao"/>
 
     </LinearLayout>
 

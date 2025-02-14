@@ -205,10 +205,10 @@ public class TrackPlayer extends MediaPlayer {
     public void generateIndexQueue(Playlist playlist) {
 
         // Set the queue length to the number of tracks in the playlist.
-        queue = new Track[playlist.getNumTracks()];
+        queue = new Track[playlist.getNumberOfTracks()];
 
         // Go through each track as per index and set equal.
-        for (int trackIndex = 0; trackIndex < playlist.getNumTracks(); trackIndex++) {
+        for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
             queue[trackIndex] = playlist.getAllTracks().get(trackIndex);
         }
 
@@ -222,13 +222,13 @@ public class TrackPlayer extends MediaPlayer {
     public void generateShuffleQueue(Playlist playlist) {
 
         // Set queue length to playlist number of tracks.
-        queue = new Track[playlist.getNumTracks()];
+        queue = new Track[playlist.getNumberOfTracks()];
 
         // Create random object; used to randomly shuffle.
         Random random = new Random();
 
         // Go through each index of the currently un-initialized queue.
-        for (int queueIndex = 0; queueIndex < playlist.getNumTracks(); queueIndex++) {
+        for (int queueIndex = 0; queueIndex < playlist.getNumberOfTracks(); queueIndex++) {
 
 //            Track randomTrack;
 //
@@ -240,7 +240,7 @@ public class TrackPlayer extends MediaPlayer {
 //            queue[queueIndex] = randomTrack;
 
             while (true) {
-                Track randomTrack = playlist.getAllTracks().get(random.nextInt(playlist.getNumTracks()));
+                Track randomTrack = playlist.getAllTracks().get(random.nextInt(playlist.getNumberOfTracks()));
                 if (!Arrays.asList(queue).contains(randomTrack)) {
                     queue[queueIndex] = randomTrack;
                     break;

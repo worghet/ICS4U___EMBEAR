@@ -28,9 +28,6 @@ public class Playlist {
     // == GETTER METHODS ================
     // ==================================
 
-    public int getNumTracks() {
-        return allTracks.size();
-    }
 
     public String getName() {
         return name;

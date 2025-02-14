@@ -21,6 +21,8 @@ import com.example.ics4u___embear.data.Track;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
+
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.EditText;
@@ -232,7 +234,10 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         FileManager.PLAYDATA_FILE = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
 
         // Check that the file exists; if it does, load data.
-        if (FileManager.playDataFileExists()) { playData = FileManager.loadPlayData(); }
+        if (FileManager.playDataFileExists()) {
+            playData = FileManager.loadPlayData();
+        }
+
 
         // If the file does not exist; assign empty one.
         else { playData = new PlayData(); }
