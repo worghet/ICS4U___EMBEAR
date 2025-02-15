@@ -230,10 +230,10 @@
 
         android:id="@+id/audioContainer"
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="0dp"
         android:scrollbarThumbVertical="@color/cadet"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout11"
-        app:layout_constraintBottom_toBottomOf="@id/bufferee">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout11">
 
         <LinearLayout
             android:id="@+id/audioContainerLayout"
@@ -319,19 +319,59 @@
 
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/bufferee"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="#274047"
-        app:layout_constraintTop_toBottomOf="@+id/audioContainer" />
+<!--    <LinearLayout-->
+<!--        android:id="@+id/bufferee"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="8dp"-->
+<!--        android:background="#274047"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/audioContainer" />-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/pickled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bufferee" />
+
+<!--    COMPACT PLAYER -->
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/playlistActivityCompactPlayer"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:background="@color/pickled"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/bufferee">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="center">-->
+
+
+<!--            <ImageView-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:src="@color/cadet"/>-->
+
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="260dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="40dp">-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:text="TRACK SAMPLE NAME"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
+
+
+
+
+<!--    </LinearLayout>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

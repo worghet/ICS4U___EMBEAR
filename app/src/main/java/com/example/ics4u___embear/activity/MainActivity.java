@@ -9,34 +9,43 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
+
 import com.example.ics4u___embear.TrackOverListener;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.Playlist;
 import com.example.ics4u___embear.data.PlayData;
+
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
-import com.example.ics4u___embear.data.Track;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
-import com.example.ics4u___embear.R;
 
-import android.util.Log;
-import android.widget.ImageButton;
+import com.example.ics4u___embear.R;
+import com.example.ics4u___embear.data.Track;
+
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.SeekBar;
 import android.content.Intent;
-import android.graphics.Color;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.IOException;
-import android.os.Handler;
+
 import android.view.View;
 import android.os.Bundle;
-import java.io.File;
 
 // == PLAYLISTS SCREEN ===========================================================
 public class MainActivity extends AppCompatActivity implements TrackOverListener {
@@ -79,41 +88,141 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     // Parameters: None.
     // Description: Loads all Playlists as buttons onto the screen.
     public void renderPlaylistButtons() {
-
-        // Create a reference to the LinearLayout inside the ScrollView.
-        LinearLayout playlistContainer = findViewById(R.id.playlistContainerLayout);
-
-        // Clear existing views in the container (if any).
+        LinearLayout playlistContainer = findViewById(R.id.playlistLayout);
         playlistContainer.removeAllViews();
 
-        // Iterate through each playlist in PlayData.
         for (int playlistIndex = 0; playlistIndex < playData.getNumPlaylists(); playlistIndex++) {
-
-            // For convenience: copy the playlist here.
             Playlist playlist = playData.getPlaylist(playlistIndex);
 
-            // =================================================
-            // == PLAYLIST BUTTON CREATION =====================
-            // =================================================
+            // Create the main row layout
+            LinearLayout playlistItemLayout = new LinearLayout(this);
+            playlistItemLayout.setOrientation(LinearLayout.HORIZONTAL);
+            playlistItemLayout.setPadding(30, 30, 30, 30);
+            playlistItemLayout.setBackgroundColor(getResources().getColor(R.color.pickled));
 
-            // Create a button dedicated to this playlist.
-            Button playlistButton = new Button(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0, 10, 0, 10);
+            playlistItemLayout.setLayoutParams(params);
+            playlistItemLayout.setGravity(Gravity.CENTER_VERTICAL);
 
-            // Set the button text as the playlist name.
-            playlistButton.setText(playlist.getName());
+//            int finalPlaylistIndex1 = playlistIndex;
+//            playlistContainer.setOnClickListener(v -> {
+//                Intent intent = new Intent(this, PlaylistActivity.class);
+//                intent.putExtra("PLAYLIST_INDEX", finalPlaylistIndex1);
+//                Intent.ac
+//            });
 
-            // Set up a listener which will redirect the user to that playlist.
-            int carryablePlaylistIndex = playlistIndex;
-            playlistButton.setOnClickListener(view -> {
+
+
+            // Create a layout for playlist text
+            LinearLayout playlistContentLayout = new LinearLayout(this);
+            playlistContentLayout.setOrientation(LinearLayout.VERTICAL);
+            playlistContentLayout.setPadding(0, 0, 30, 0);
+            playlistContentLayout.setGravity(Gravity.LEFT);
+
+            // Give the text container weight to push the icon right
+            LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+            playlistContentLayout.setLayoutParams(textParams);
+
+            TextView playlistNameTextView = new TextView(this);
+            playlistNameTextView.setText(playlist.getName());
+            playlistNameTextView.setTextSize(18);
+            playlistNameTextView.setPadding(0, 0, 0, 10);
+            playlistNameTextView.setTextColor(getResources().getColor(R.color.cadet));
+            playlistNameTextView.setTypeface(null, Typeface.BOLD);
+
+            TextView playlistDescriptionTextView = new TextView(this);
+            playlistDescriptionTextView.setText(playlist.getNumberOfTracks() + " TRACKS | " +
+                    Track.formatMilliseconds(playlist.getPlaylistPlayTime()));
+            playlistDescriptionTextView.setPadding(0, 10, 0, 0);
+            playlistDescriptionTextView.setTextColor(getResources().getColor(R.color.cadet));
+            playlistDescriptionTextView.setTypeface(null, Typeface.BOLD);
+
+            playlistContentLayout.addView(playlistNameTextView);
+            playlistContentLayout.addView(playlistDescriptionTextView);
+
+            // Create the delete icon
+            ImageView deleteIcon = new ImageView(this);
+            deleteIcon.setImageResource(R.drawable.delete);
+
+            // Increase the size of the icon
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
+                    dpToPx(40), dpToPx(40));
+            deleteIcon.setLayoutParams(iconParams);
+
+            deleteIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            deleteIcon.setPadding(0, 0, 0, 0);
+
+            int finalPlaylistIndex = playlistIndex;
+            deleteIcon.setOnClickListener(view -> {
+                new AlertDialog.Builder(this)
+                        .setTitle("DELETE PLAYLIST")
+                        .setMessage("Are you sure you want to delete this playlist?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            playData.removePlaylist(playData.getPlaylist(finalPlaylistIndex));
+                            FileManager.savePlayData(PlayData.playData);
+                            renderPlaylistButtons();
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            });
+
+            // Add text and delete icon to main row layout
+            playlistItemLayout.addView(playlistContentLayout);
+            playlistItemLayout.addView(deleteIcon);
+
+            playlistItemLayout.setOnClickListener(v -> {
                 Intent intent = new Intent(this, PlaylistActivity.class);
-                intent.putExtra("PLAYLIST_INDEX", carryablePlaylistIndex);
+                intent.putExtra("PLAYLIST_INDEX", finalPlaylistIndex);
                 startActivity(intent);
             });
 
-            // Add the button to the container layout
-            playlistContainer.addView(playlistButton);
+            // Add to container
+            playlistContainer.addView(playlistItemLayout);
         }
+
+        // ======= ADD PLAYLIST BUTTON =======
+        LinearLayout addPlaylistLayout = new LinearLayout(this);
+        addPlaylistLayout.setOrientation(LinearLayout.HORIZONTAL);
+        addPlaylistLayout.setPadding(30, 30, 30, 30);
+        addPlaylistLayout.setBackgroundColor(getResources().getColor(R.color.pickled));
+        addPlaylistLayout.setGravity(Gravity.CENTER);
+
+        LinearLayout.LayoutParams addParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        addParams.setMargins(0, 10, 0, 10);
+        addPlaylistLayout.setLayoutParams(addParams);
+
+// Create ImageView for the add button
+        ImageView addButton = new ImageView(this);
+        addButton.setImageResource(R.drawable.add_track); // Ensure you have this drawable
+
+// Set fixed size for the add icon
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
+                dpToPx(48), dpToPx(48)); // Adjust size as needed
+        addButton.setLayoutParams(iconParams);
+        addButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+// Handle click to add a new playlist
+        addPlaylistLayout.setOnClickListener(view -> {
+            addPlaylistToPlayData(); // Replace with your actual method for adding playlists
+        });
+
+// Add the button to the layout
+        addPlaylistLayout.addView(addButton);
+
+// Add button to container
+        playlistContainer.addView(addPlaylistLayout);
+
     }
+
+    // Utility method for converting dp to pixels
+    private int dpToPx(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
 
     // Parameters: None.
     // Description: Gets rid of SYSTEM UI.
@@ -139,91 +248,51 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     // TODO: recolor dis
     // Parameters: (View) Object which called this method.
     // Description: Makes a popup which requests a name for the new playlist.
-    public void addPlaylistToPlayData(View view) {
+    public void addPlaylistToPlayData() {
+        EditText inputLine = new EditText(this);  // Create the EditText in this activity
+        inputLine.setHint("Enter new playlist name");  // Optional: Set a hint text
 
-        // ----------------------------------------------------------------|
-        // 1. Create the popup. TODO: CHANGE COMPOSITION OF POPUP (COLOR). |
-        // ----------------------------------------------------------------|
+        // Set hint text color (correctly using getResources().getColor())
+        inputLine.setTextColor(Color.BLACK);
 
-        // Create the input line where the user will write the desired name.
-        EditText inputLine = new EditText(this);
-        inputLine.setHint("NEW PLAYLIST NAME:"); // sets what should be entered
-
-        // TODO import own colors, try to make rounded stuff
+        // Set padding (left, top, right, bottom) in pixels (you could also convert from dp if needed)
         inputLine.setPadding(70, 0, 0, 30);
 
-        // alert dialogue is the actual UI popup
-        AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this); // again, to create in this activity
+        // Optionally, set other properties, like text size, if necessary
+        inputLine.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);  // Example: Set text size in sp
 
-        popupBuilder.setTitle("NEW PLAYLIST CREATION");
-        popupBuilder.setMessage("PLEASE ENTER THE DESIRED NAME:");
-        popupBuilder.setView(inputLine);
+        // Build the alert dialog
+        AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this);
+        popupBuilder.setTitle("RENAMING PLAYLIST");
+        popupBuilder.setMessage("Please enter the new name below.");
+        popupBuilder.setView(inputLine); // Set the EditText as the view
 
-        // ------------------------------------|
-        // 2. Setup "CANCEL" and "ADD" Buttons |
-        // ------------------------------------|
-
-        // When the add button is pressed.
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
+            String newPlaylistName = inputLine.getText().toString().trim();
 
-            // Read what is in the entered line.
-             String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
-
-            // ERROR CHECKING ----
-
-            // Check if String entered is empty.
             if (!newPlaylistName.isEmpty()) {
-
-                // Compare the new name with all of the existing names.
-                boolean nameHasBeenUsed = false;
-                for (int playlistIndex = 0; playlistIndex < playData.getNumPlaylists(); playlistIndex++) {
-                    if (newPlaylistName.equals(playData.getPlaylist(playlistIndex))) {
-                        nameHasBeenUsed = true;
-                        break;
-                    }
-                }
-
-                // If it hasn't been used, make the new playlist.
-                if (!nameHasBeenUsed) {
-
-                    // Add the new playlist to playData.
-                    playData.addPlaylist(new Playlist(newPlaylistName));
-
-                    File file = getFileStreamPath(FileManager.PLAYDATA_FILE_NAME);
-
-                    FileManager.savePlayData(playData);
-
-                    renderPlaylistButtons();
-
-                }
-                // If the name has been used; do nothing.
-                else {
-                    Toast errorPopup = new Toast(this);
-                    errorPopup.setText("ERROR: NAME ALREADY USED");
-                    errorPopup.show();
-                }
-
-            }
-            else {
+                playData.addPlaylist(new Playlist(newPlaylistName));
+                FileManager.savePlayData(PlayData.playData);
+                renderPlaylistButtons();
+            } else {
                 Toast errorPopup = new Toast(this);
-                errorPopup.setText("ERROR: EMPTY NAME GIVEN");
+                errorPopup.setText("EMPTY NAME GIVEN");
                 errorPopup.show();
             }
         }));
 
-        // when cancel is pressed
         popupBuilder.setNegativeButton("CANCEL", null);
 
-        // Build the popup itself.
         AlertDialog popup = popupBuilder.create();
 
-        // Display the popup to the user.
-        popup.show();
+        // Set the background color for the popup (dialog)
+        Window window = popup.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.cadet)));
+        }
 
-        // modifications to popup must occur after it is shown
-        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
-        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(Color.BLACK);
-        popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
+        // Show the popup
+        popup.show();
     }
 
     // Parameters: None.
@@ -240,7 +309,9 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
 
 
         // If the file does not exist; assign empty one.
-        else { playData = new PlayData(); }
+        else {
+            playData = new PlayData();
+        }
 
         PlayData.playData = playData; // TODO globalize ts
     }
@@ -287,9 +358,11 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     }
 
     // Parameters: None.
-    /** EXPLANATION:
-    When an activity is opened, it sets the current activity in to a paused state.
-    This method performs an action when it is unpaused (resumed); when the screen is returned to.
+
+    /**
+     * EXPLANATION:
+     * When an activity is opened, it sets the current activity in to a paused state.
+     * This method performs an action when it is unpaused (resumed); when the screen is returned to.
      */
     @Override
     protected void onResume() {

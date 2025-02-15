@@ -27,6 +27,8 @@ import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
 
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -83,7 +85,15 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         playTimeView = findViewById(R.id.playTimeView);
 
         loopToggleView = findViewById(R.id.loopToggler);
+        if (trackPlayer.isQueueLooping()) {
+            loopToggleView.setBackgroundResource(R.drawable.looping_true);
+        }
+
         shuffleToggleView = findViewById(R.id.shuffleToggler);
+        if (trackPlayer.isShuffle()) {
+            shuffleToggleView.setBackgroundResource(R.drawable.shuffle_true);
+        }
+
         // TODO add scrollbar here?
 
         // Display the playlist data.
@@ -228,7 +238,13 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             trackCardView.setOnClickListener(view -> {
                 try {
                     // Play the track
-                    trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
+                    if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(finalTrackIndex)) {
+                        goToFullscreenTrackPlayer();
+                    }
+                    else {
+                        trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -277,12 +293,13 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
                 // Remove the specific track's CardView from the container
                 trackContainer.removeViewAt(carryableTrackIndex + 1);
+                // TODO use a tag system to delete the correct view
 
                 // Save the playlist data
                 FileManager.savePlayData(PlayData.playData);
 
                 // Optionally, if you want to update the remaining track views
-//                renderPlaylistData(); // Or re-render selectively if necessary
+                renderPlaylistData(); // Or re-render selectively if necessary
             });
 
             deleteCardView.addView(deleteButton); // Add delete button to the delete card
@@ -303,7 +320,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
     // Parameters: (View) Object which called this method.
     // Description: Opens (the currently playing track in) the fullscreen player.
-    public void goToFullscreenTrackPlayer(View view) {
+    public void goToFullscreenTrackPlayer() {
         if (trackPlayer.isPlaying()) {
             Intent intent = new Intent(this, TrackActivity.class);
             startActivity(intent);
@@ -403,64 +420,52 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: (View) Object which called this method.
     // Description: Opens a popup, then renames the working playlist.
     public void renamePlaylist(View view) {
+        EditText inputLine = new EditText(this);  // Create the EditText in this activity
+        inputLine.setHint("Enter new playlist name");  // Optional: Set a hint text
 
+        // Set hint text color (correctly using getResources().getColor())
+        inputLine.setHintTextColor(getResources().getColor(R.color.cadet));
 
-        // edit text is an input getter
-        EditText inputLine = new EditText(this); // created in This activity
-        inputLine.setHint("NEW PLAYLIST NAME:"); // sets what should be entered
-
-        // formatting
-        // TODO import own colors, try to make rounded stuff
+        // Set padding (left, top, right, bottom) in pixels (you could also convert from dp if needed)
         inputLine.setPadding(70, 0, 0, 30);
-//        inputLine.setBackgroundColor(); // can use images as background. ex Color.BLACK
-        // setTextSize,
 
-        // alert dialogue is the actual UI popup
-        AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this); // again, to create in this activity
-        popupBuilder.setTitle("PLAYLIST RENAMING");
-        popupBuilder.setMessage("PLEASE ENTER THE DESIRED NAME:");
-        popupBuilder.setView(inputLine);
+        // Optionally, set other properties, like text size, if necessary
+        inputLine.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);  // Example: Set text size in sp
 
-        // add buttons and what to do when theyre pressed
+        // Build the alert dialog
+        AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this);
+        popupBuilder.setTitle("RENAMING PLAYLIST");
+        popupBuilder.setMessage("Please enter the new name below.");
+        popupBuilder.setView(inputLine); // Set the EditText as the view
 
-
-        // TODO DISABLE BUTTON UNTIL POSSIBLE (USE LISTENER)
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
-
-            // collect new name
-            String newPlaylistName = inputLine.getText().toString().trim(); // trim gets rid of trailing and leading spaces
-            // can do error checking here: not empty, not already in playdata
+            String newPlaylistName = inputLine.getText().toString().trim();
 
             if (!newPlaylistName.isEmpty()) {
                 playlist.setName(newPlaylistName);
                 FileManager.savePlayData(PlayData.playData);
                 renderPlaylistData();
-                // TODO re render playlist buttons
             } else {
                 Toast errorPopup = new Toast(this);
-                errorPopup.setText("FAILED TO RENAME: EMPTY NAME GIVEN");
+                errorPopup.setText("EMPTY NAME GIVEN");
                 errorPopup.show();
             }
         }));
 
-        // when cancel is pressed
         popupBuilder.setNegativeButton("CANCEL", null);
-
 
         AlertDialog popup = popupBuilder.create();
 
+        // Set the background color for the popup (dialog)
+        Window window = popup.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.cadet)));
+        }
 
-        // show it (theres a method in builder too which just creates in it
+        // Show the popup
         popup.show();
-
-        // modifications to popup must occur after it is shown
-        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED);
-        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(Color.BLACK);
-//        popup.getButton(AlertDialog.BUTTON_NEGATIVE).setRa
-        popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));  // Example with a custom color (hex code)
-
-
     }
+
 
     // Parameters: (View) Object which called this method.
     // Description: Removes the working playlist from playData, closes screen.
