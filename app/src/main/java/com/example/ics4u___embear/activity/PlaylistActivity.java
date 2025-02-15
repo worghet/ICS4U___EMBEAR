@@ -2,21 +2,33 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
+
 import com.example.ics4u___embear.TrackOverListener;
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.PlayData;
 import com.example.ics4u___embear.data.Playlist;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.data.Track;
+
 import androidx.appcompat.app.AlertDialog;
+
 import android.provider.OpenableColumns;
+
+import androidx.cardview.widget.CardView;
 import androidx.core.view.WindowCompat;
+
 import com.example.ics4u___embear.R;
 
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.database.Cursor;
@@ -26,7 +38,9 @@ import android.graphics.Color;
 import android.widget.Button;
 import android.view.Gravity;
 import android.widget.Toast;
+
 import java.io.IOException;
+
 import android.view.View;
 import android.os.Bundle;
 import android.net.Uri;
@@ -41,7 +55,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     private static final int REQUEST_AUDIO_PICK = 2;
     private TrackPlayer trackPlayer = SharedObjects.trackPlayer;
     private TextView playlistNameView, numberOfTracksView, playTimeView;
+    private ImageButton loopToggleView, shuffleToggleView;
     private Playlist playlist;
+    // Variable to keep track of the currently playing CardView
 
     // ==================================
     // == SCREEN BUILDER (ON_CREATE) ====
@@ -65,6 +81,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         playlistNameView = findViewById(R.id.playlistName);
         numberOfTracksView = findViewById(R.id.numberOfTracksView);
         playTimeView = findViewById(R.id.playTimeView);
+
+        loopToggleView = findViewById(R.id.loopToggler);
+        shuffleToggleView = findViewById(R.id.shuffleToggler);
         // TODO add scrollbar here?
 
         // Display the playlist data.
@@ -95,65 +114,192 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: None.
     // Description: Updates the displays with the playlist data.
     private void renderPlaylistData() {
-
         // Display the number of tracks in playlist, and the total time of the playlist.
-//        playlistContentData.setText(playlist.getNumberOfTracks() + " TRACKS | " + Track.formatMilliseconds(playlist.getPlaylistPlayTime()) + " TOTAL");
         numberOfTracksView.setText(String.valueOf(playlist.getNumberOfTracks()) + " TRACKS");
         playTimeView.setText(Track.formatMilliseconds(playlist.getPlaylistPlayTime()));
 
         // Display the playlist name.
         playlistNameView.setText(playlist.getName());
 
-        // TODO Card Layout.
+        // Get the container where the tracks will be added.
         LinearLayout trackContainer = findViewById(R.id.audioContainerLayout);
 
         // Clear the container (in case it is not the first render).
-        trackContainer.removeAllViews();
+        int childCount = trackContainer.getChildCount();
+        for (int i = childCount - 1; i > 0; i--) {
+            trackContainer.removeViewAt(i);  // Remove view at index i
+        }
 
         // Load the container with the tracks.
         for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
 
+//            boolean
 
-            LinearLayout trackAndDeleteContainer = new LinearLayout(this);
-            trackAndDeleteContainer.setOrientation(LinearLayout.HORIZONTAL);
-            trackAndDeleteContainer.setGravity(Gravity.CENTER);
-            trackAndDeleteContainer.setPadding(16, 16, 16, 16);
+            // Create the parent container for the track and delete card
+            LinearLayout trackDeleteContainer = new LinearLayout(this);
+            trackDeleteContainer.setOrientation(LinearLayout.HORIZONTAL);
+            trackDeleteContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT)
+            );
+            trackDeleteContainer.setPadding(0, 40, 0, 0); // Adds spacing between cards
+
+            // Create the CardView for the track
+            CardView trackCardView = new CardView(this);
+            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(
+                    0, // Set 0 width to allow it to expand and take up available space
+                    200 // height of the CardView
+            );
+            cardLayoutParams.weight = 1; // This ensures that the trackCard takes up the majority of the space
+            trackCardView.setLayoutParams(cardLayoutParams);
 
 
-            Button trackButton = new Button(this);
-            trackButton.setText(playlist.getAllTracks().get(trackIndex).getTrackName());
-            // Add click listener if needed to play the audio
+            trackCardView.setCardBackgroundColor(getResources().getColor(R.color.pickled)); // Set background color
 
-            int carryableTrackIndex = trackIndex;
-            trackButton.setOnClickListener(view -> {
+
+            trackCardView.setRadius(20); // Rounded corners
+            trackCardView.setUseCompatPadding(true); // Adds padding for shadow
+
+            // Create the horizontal LinearLayout inside the track CardView
+            LinearLayout trackLayout = new LinearLayout(this);
+            trackLayout.setOrientation(LinearLayout.HORIZONTAL);
+            trackLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
+            trackLayout.setPadding(24, 0, 0, 0);
+
+            // Left container: track icon (ImageView)
+            LinearLayout leftContainer = new LinearLayout(this);
+            leftContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    100, // Slightly larger width for more space around the image
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
+            leftContainer.setGravity(Gravity.CENTER);
+
+            ImageView trackImageView = new ImageView(this);
+            trackImageView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT)
+            );
+            trackImageView.setImageBitmap(playlist.getAllTracks().get(trackIndex).getIconFromMetadata(this));  // Set a default icon (replace with track icon if available)
+            trackImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            leftContainer.addView(trackImageView);
+
+            // Right container: track name, artist, and playtime
+            LinearLayout rightContainer = new LinearLayout(this);
+            rightContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT, 1)
+            );
+            rightContainer.setGravity(Gravity.CENTER_VERTICAL);
+            rightContainer.setOrientation(LinearLayout.VERTICAL);
+            rightContainer.setPadding(30, 0, 0, 0);
+
+            // Track Name TextView
+            TextView trackNameTextView = new TextView(this);
+            trackNameTextView.setText(playlist.getAllTracks().get(trackIndex).getTrackName());
+            trackNameTextView.setTextColor(getResources().getColor(R.color.cadet));
+            trackNameTextView.setTextSize(14); // Or use sp for scaling
+            trackNameTextView.setTypeface(null, Typeface.BOLD);
+
+            // Artist and Playtime TextView
+            TextView trackInfoTextView = new TextView(this);
+            trackInfoTextView.setText(
+                    playlist.getAllTracks().get(trackIndex).getArtistName() + " | " +
+                            Track.formatMilliseconds(playlist.getAllTracks().get(trackIndex).getDurationInMilliseconds()));
+            trackInfoTextView.setTextColor(getResources().getColor(R.color.cadet));
+            trackInfoTextView.setTextSize(10); // Or use sp for scaling
+            trackInfoTextView.setTypeface(null, Typeface.BOLD);
+
+            // Add TextViews to right container
+            rightContainer.addView(trackNameTextView);
+            rightContainer.addView(trackInfoTextView);
+
+            // Add the left and right containers to the trackLayout
+            trackLayout.addView(leftContainer);
+            trackLayout.addView(rightContainer);
+
+            // Add trackLayout to the trackCardView
+            trackCardView.addView(trackLayout);
+
+            // Set OnClickListener for CardView to play the track
+            int finalTrackIndex = trackIndex;
+            trackCardView.setOnClickListener(view -> {
                 try {
-                    trackPlayer.playTrack(this, playlist.getAllTracks().get(carryableTrackIndex));
+                    // Play the track
+                    trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             });
 
-            // ===========
 
-            Button removeTrackButton = new Button(this);
-            removeTrackButton.setText("del");
-            removeTrackButton.setOnClickListener(del -> {
 
-                if (trackPlayer.isPlaying()) {
+            // Create the delete CardView and button
+            CardView deleteCardView = new CardView(this);
+            deleteCardView.setLayoutParams(new LinearLayout.LayoutParams(
+                    200, // Set both width and height to 100 to make the card square
+                    200 // Same as width to ensure it's square
+            ));
+            deleteCardView.setRadius(10); // Rounded corners for the delete card
+            deleteCardView.setUseCompatPadding(true); // Adds padding for shadow
+
+            // Inside the delete card, add the delete button
+            // Inside the delete card, add the delete button
+            ImageButton deleteButton = new ImageButton(this);
+            deleteButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
+
+// Set the background color to 'pickled'
+//            if
+            deleteButton.setBackgroundColor(getResources().getColor(R.color.pickled));
+//            deleteButton.setRadius
+
+// Set the delete image
+            deleteButton.setImageResource(R.drawable.delete);
+
+// Make the image fit inside the button
+            deleteButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            // OnClickListener for the delete button
+            // OnClickListener for the delete button
+            final int carryableTrackIndex = trackIndex;
+            deleteButton.setOnClickListener(view -> {
+                if (trackPlayer.isPlaying() && trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(carryableTrackIndex)) {
                     trackPlayer.togglePlaying();
                 }
+
+                // Remove the track from the playlist
                 playlist.removeTrack(playlist.getAllTracks().get(carryableTrackIndex));
+
+                // Remove the specific track's CardView from the container
+                trackContainer.removeViewAt(carryableTrackIndex + 1);
+
+                // Save the playlist data
                 FileManager.savePlayData(PlayData.playData);
-                renderPlaylistData();
+
+                // Optionally, if you want to update the remaining track views
+//                renderPlaylistData(); // Or re-render selectively if necessary
             });
 
+            deleteCardView.addView(deleteButton); // Add delete button to the delete card
+            deleteCardView.setRadius(25); // Rounded corners for the delete card
 
 
-            trackAndDeleteContainer.addView(trackButton);
-            trackAndDeleteContainer.addView(removeTrackButton);
-            trackContainer.addView(trackAndDeleteContainer);
+            // Add the delete card to the parent container
+            trackDeleteContainer.addView(trackCardView);
+            trackDeleteContainer.addView(deleteCardView); // Add the delete button card to the same container
+
+
+            // Add the trackDeleteContainer to the trackContainer
+            trackContainer.addView(trackDeleteContainer);
+
         }
     }
+
 
     // Parameters: (View) Object which called this method.
     // Description: Opens (the currently playing track in) the fullscreen player.
@@ -290,8 +436,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                 FileManager.savePlayData(PlayData.playData);
                 renderPlaylistData();
                 // TODO re render playlist buttons
-            }
-            else {
+            } else {
                 Toast errorPopup = new Toast(this);
                 errorPopup.setText("FAILED TO RENAME: EMPTY NAME GIVEN");
                 errorPopup.show();
@@ -337,18 +482,32 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // == QUEUE MANAGEMENT METHODS ======
     // ==================================
 
-    // Parameters: (View) Object which called this method.
-    // Description: Generates and starts playing tracks by index.
-    public void playInOrder(View view) throws IOException {
-        trackPlayer.generateIndexQueue(playlist);
+    public void playQueue(View view) throws IOException {
+        if (trackPlayer.isShuffle()) {
+            trackPlayer.generateShuffleQueue(playlist);
+        } else {
+            trackPlayer.generateIndexQueue(playlist);
+        }
+
         trackPlayer.startPlayingQueue(this);
     }
 
-    // Parameters: (View) Object which called this method.
-    // Description: Generates random queue order and plays it.
-    public void playShuffle(View view) throws IOException {
-        trackPlayer.generateShuffleQueue(playlist);
-        trackPlayer.startPlayingQueue(this);
+    public void toggleLooping(View view) {
+        trackPlayer.toggleQueueLooping();
+        if (trackPlayer.isQueueLooping()) {
+            loopToggleView.setBackgroundResource(R.drawable.looping_true);
+        } else {
+            loopToggleView.setBackgroundResource(R.drawable.looping_false);
+        }
+    }
+
+    public void toggleShuffle(View view) {
+        trackPlayer.toggleShuffle();
+        if (trackPlayer.isShuffle()) {
+            shuffleToggleView.setBackgroundResource(R.drawable.shuffle_true);
+        } else {
+            shuffleToggleView.setBackgroundResource(R.drawable.shuffle_false);
+        }
     }
 
     // ==================================
@@ -393,9 +552,11 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     }
 
     // Parameters: None.
-    /** EXPLANATION:
-     When an activity is opened, it sets the current activity in to a paused state.
-     This method performs an action when it is unpaused (resumed); when the screen is returned to.
+
+    /**
+     * EXPLANATION:
+     * When an activity is opened, it sets the current activity in to a paused state.
+     * This method performs an action when it is unpaused (resumed); when the screen is returned to.
      */
     @Override
     protected void onResume() {

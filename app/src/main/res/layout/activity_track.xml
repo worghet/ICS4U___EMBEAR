@@ -199,8 +199,7 @@
             android:layout_marginEnd="10dp"
             android:background="@drawable/pause_track"
             android:onClick="togglePlaying"
-            android:scaleType="fitCenter"
-            android:src="@drawable/pause_track" />
+            android:scaleType="fitCenter"/>
 
         <ImageButton
             android:id="@+id/next"

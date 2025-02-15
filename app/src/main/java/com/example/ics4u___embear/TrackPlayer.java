@@ -35,7 +35,8 @@ public class TrackPlayer extends MediaPlayer {
     public TrackPlayer() {
         super(); // Media player capabilities.
         timeProgress = 0;
-        queueLooping = true;
+        queueLooping = false;
+        isShuffle = false;
     }
 
     public void addTrackOverListener(TrackOverListener trackOverListener) {
@@ -48,6 +49,14 @@ public class TrackPlayer extends MediaPlayer {
 
     public Track getTrackPlaying() {
         return trackPlaying;
+    }
+
+    public boolean isQueueLooping() {
+        return queueLooping;
+    }
+
+    public boolean isShuffle() {
+        return isShuffle;
     }
 
     // ==================================
@@ -214,7 +223,6 @@ public class TrackPlayer extends MediaPlayer {
 
         // Set info variables.
         playingFrom = playlist;
-        isShuffle = false;
     }
 
     // Parameters: (Playlist) playlist to generate from.
@@ -250,7 +258,6 @@ public class TrackPlayer extends MediaPlayer {
 
         // Set info variables.
         playingFrom = playlist;
-        isShuffle = true;
 
     }
 
@@ -258,6 +265,10 @@ public class TrackPlayer extends MediaPlayer {
     // Description: Sets / stops looping playlist.
     public void toggleQueueLooping() {
         queueLooping = !queueLooping;
+    }
+
+    public void toggleShuffle() {
+        isShuffle = !isShuffle;
     }
 
     // OTHER METHODS --------------------------------------------------------

@@ -179,13 +179,11 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
 
         // Change the icon to pause if playing, playing if pause.
         if ((Integer) togglePlaying.getTag() == R.drawable.pause_track) {
-            togglePlaying.setImageResource(R.drawable.play_track);
             togglePlaying.setBackgroundResource(R.drawable.play_track);
             togglePlaying.setTag(R.drawable.play_track);
         }
         else {
             togglePlaying.setImageResource(R.drawable.pause_track);
-            togglePlaying.setBackgroundResource(R.drawable.pause_track);
             togglePlaying.setTag(R.drawable.pause_track);
         }
     }

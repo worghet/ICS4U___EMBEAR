@@ -16,24 +16,10 @@
         android:layout_height="45dp"
         android:background="@color/pickled"
         android:orientation="horizontal"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/addAudio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="addAudioFile"
-            android:text="ADD AUDIO"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.903"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.185" />
-    </LinearLayout>
 
-    
-<!--    PLAYLIST DATA-->
+    <!--    PLAYLIST DATA-->
     <LinearLayout
         android:id="@+id/linearLayout9"
         android:layout_width="match_parent"
@@ -56,7 +42,7 @@
 
         </LinearLayout>
 
-<!--        DATA -->
+        <!--        DATA -->
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
@@ -64,14 +50,12 @@
             android:paddingEnd="20dp">
 
 
-
-
-<!--            BUFFER-->
+            <!--            BUFFER-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"/>
+                android:layout_height="25dp" />
 
-<!--            TITLE -->
+            <!--            TITLE -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
@@ -86,11 +70,11 @@
                     android:textSize="32dp"
                     android:textStyle="bold"
 
-                 />
+                    />
 
             </LinearLayout>
 
-<!--            TIME AND NUM TRACKS -->
+            <!--            TIME AND NUM TRACKS -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
@@ -99,8 +83,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/number_of_tracks"
-                    />
+                    android:src="@drawable/number_of_tracks" />
 
                 <TextView
                     android:id="@+id/numberOfTracksView"
@@ -122,36 +105,33 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/listening_time"
-                    />
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/listening_time" />
 
                 <TextView
                     android:id="@+id/playTimeView"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
-                    android:text="HH:MM:SS"
-                    android:gravity="center_vertical"
                     android:layout_marginStart="7dp"
-                    android:textStyle="bold"
-                    android:textColor="@color/cadet"/>
+                    android:gravity="center_vertical"
+                    android:text="HH:MM:SS"
+                    android:textColor="@color/cadet"
+                    android:textStyle="bold" />
 
             </LinearLayout>
-
 
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginStart="20dp"
             android:layout_width="50dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp">
 
             <ImageButton
                 android:layout_width="match_parent"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp" />
         </LinearLayout>
-
-
 
 
         <TextView
@@ -168,52 +148,190 @@
             app:layout_constraintVertical_bias="0.011" />
     </LinearLayout>
 
-<!--    QUEUE OPTIONS -->
+    <!--    QUEUE OPTIONS -->
 
     <LinearLayout
         android:id="@+id/linearLayout10"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:background="@color/cadet"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:weightSum="1"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
 
+        <!-- Play Queue Button on the left -->
+        <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_weight="0"
+            android:background="@drawable/play_queue"
+            android:onClick="playQueue"
+            android:scaleType="centerCrop" />
 
-        <Button
-            android:id="@+id/play"
+        <!-- Spacer between the Play Queue button and the other buttons -->
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" />
+
+        <!-- Group of buttons on the right -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="playInOrder"
-            android:text="PLAY" />
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
-        <Button
-            android:id="@+id/shuffle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="playShuffle"
-            android:text="SHUFFLE" />
+            <!-- Shuffle Button -->
+            <ImageButton
+                android:id="@+id/shuffleToggler"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/shuffle_false"
+                android:onClick="toggleShuffle"
+                android:scaleType="centerCrop" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LOOP"/>
+            <!-- Loop Button -->
+            <ImageButton
+                android:id="@+id/loopToggler"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/looping_false"
+                android:onClick="toggleLooping"
+                android:scaleType="centerCrop" />
 
+            <!-- Rename Button -->
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/rename"
+                android:onClick="renamePlaylist"
+                android:scaleType="centerCrop" />
+
+        </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearLayout11"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="#949AA8"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10" />
+
+    <!--    SCROLL VIEW-->
 
 
     <ScrollView
+
         android:id="@+id/audioContainer"
-        android:layout_width="407dp"
-        android:layout_height="536dp"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout10"
-      >
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
+        android:scrollbarThumbVertical="@color/cadet"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout11"
+        app:layout_constraintBottom_toBottomOf="@id/bufferee">
 
         <LinearLayout
             android:id="@+id/audioContainerLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            android:layout_margin="24dp"
+            android:orientation="vertical"
+            android:paddingBottom="50dp">
+
+
+            <!--            ADD AUDIO CONTAINER -->
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:onClick="addAudioFile"
+                android:outlineAmbientShadowColor="@color/black"
+                android:outlineSpotShadowColor="@color/black"
+                app:cardBackgroundColor="@color/pickled"
+                app:cardCornerRadius="10dp">
+
+
+                <!-- Horizontal LinearLayout to divide space -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    android:orientation="horizontal">
+
+
+                    <!-- LEFT CONTAINER -->
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/add_track" />
+                    </LinearLayout>
+
+                    <!-- RIGHT CONTAINER FILLING REMAINING SPACE -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <!-- First TextView (dynamic height) -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="CLICK HERE TO ADD A NEW TRACK"
+                            android:textColor="@color/cadet"
+                            android:textSize="14dp"
+                            android:textStyle="bold" />
+
+                        <!-- Second TextView (dynamic height) -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="THIS WILL ACCESS YOUR LOCAL FILES"
+                            android:textColor="@color/cadet"
+                            android:textSize="10dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <!--            next item-->
+
+
+        </LinearLayout>
+
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bufferee"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="#274047"
+        app:layout_constraintTop_toBottomOf="@+id/audioContainer" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/pickled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bufferee" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
