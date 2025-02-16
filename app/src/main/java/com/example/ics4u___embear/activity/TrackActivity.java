@@ -9,9 +9,6 @@ import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.data.Track;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
-
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,7 +50,6 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         trackNameView = findViewById(R.id.trackNameView);
         trackArtistNameView = findViewById(R.id.artistNameView);
         trackIconView = findViewById(R.id.trackIconView);
-
         totalTimeBox = findViewById(R.id.totalTime);
         currentTimeBox = findViewById(R.id.currentTime);
         durationSeekbar = findViewById(R.id.progressDuration);
@@ -102,6 +98,8 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         initializeSeekbar();
     }
 
+    // Parameters: (View) view.
+    // Description: closes the activity; goes back to the playlist menu.
     public void goBack(View view) {
         finish();
     }
@@ -110,7 +108,7 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
     // == TRACK CONTROL METHODS =========
     // ==================================
 
-    // Parameters: None..?
+    // Parameters: None.
     // Description: Sets all the seekbar values and functions.
     public void initializeSeekbar() {
 
@@ -143,30 +141,24 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         // Start the periodic update when audio starts playing
         handler.post(updateRunnable);
 
-        // Set the SeekBar listener to handle user interaction
+        // Set the SeekBar listener to handle user interaction.
         durationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Update currentTimeBox when SeekBar progress changes
+                // Update currentTimeBox when SeekBar progress changes.
                 currentTimeBox.setText(Track.formatMilliseconds(progress));
 
-                // If the user is dragging the SeekBar, update the audio player's position
+                // If the user is dragging the SeekBar, update the audio player's position.
                 if (fromUser) {
                     trackPlayer.seekTo(progress);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                // Optionally, you can stop periodic updates when the user is dragging
-//                currentTimeBox.setText(Track.formatMilliseconds(durationSeekbar.getProgress()));
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Optionally, resume the periodic updates after the user stops dragging
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 

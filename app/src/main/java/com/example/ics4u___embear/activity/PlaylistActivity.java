@@ -2,49 +2,36 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
-
 import com.example.ics4u___embear.TrackOverListener;
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.PlayData;
 import com.example.ics4u___embear.data.Playlist;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.data.Track;
-
 import androidx.appcompat.app.AlertDialog;
-
-import android.provider.OpenableColumns;
-
 import androidx.cardview.widget.CardView;
+import android.provider.OpenableColumns;
 import androidx.core.view.WindowCompat;
-
 import com.example.ics4u___embear.R;
-
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Window;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.graphics.Typeface;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.util.TypedValue;
 import android.database.Cursor;
 import android.widget.EditText;
 import android.content.Intent;
-import android.graphics.Color;
-import android.widget.Button;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import java.io.IOException;
-
+import android.view.Window;
 import android.view.View;
 import android.os.Bundle;
+import android.util.Log;
 import android.net.Uri;
 
 // == PLAYLIST SCREEN ================================================================
@@ -59,7 +46,6 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     private TextView playlistNameView, numberOfTracksView, playTimeView;
     private ImageButton loopToggleView, shuffleToggleView;
     private Playlist playlist;
-    // Variable to keep track of the currently playing CardView
 
     // ==================================
     // == SCREEN BUILDER (ON_CREATE) ====
@@ -94,8 +80,6 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             shuffleToggleView.setBackgroundResource(R.drawable.shuffle_true);
         }
 
-        // TODO add scrollbar here?
-
         // Display the playlist data.
         renderPlaylistData();
     }
@@ -124,8 +108,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: None.
     // Description: Updates the displays with the playlist data.
     private void renderPlaylistData() {
+
         // Display the number of tracks in playlist, and the total time of the playlist.
-        numberOfTracksView.setText(String.valueOf(playlist.getNumberOfTracks()) + " TRACKS");
+        numberOfTracksView.setText(playlist.getNumberOfTracks() + " TRACKS");
         playTimeView.setText(Track.formatMilliseconds(playlist.getPlaylistPlayTime()));
 
         // Display the playlist name.
@@ -142,8 +127,6 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
         // Load the container with the tracks.
         for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
-
-//            boolean
 
             // Create the parent container for the track and delete card
             LinearLayout trackDeleteContainer = new LinearLayout(this);
@@ -420,19 +403,15 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: (View) Object which called this method.
     // Description: Opens a popup, then renames the working playlist.
     public void renamePlaylist(View view) {
-        EditText inputLine = new EditText(this);  // Create the EditText in this activity
-        inputLine.setHint("Enter new playlist name");  // Optional: Set a hint text
+        EditText inputLine = new EditText(this);
+        inputLine.setHint("Enter new playlist name");
 
-        // Set hint text color (correctly using getResources().getColor())
         inputLine.setHintTextColor(getResources().getColor(R.color.cadet));
 
-        // Set padding (left, top, right, bottom) in pixels (you could also convert from dp if needed)
         inputLine.setPadding(70, 0, 0, 30);
 
-        // Optionally, set other properties, like text size, if necessary
         inputLine.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);  // Example: Set text size in sp
 
-        // Build the alert dialog
         AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this);
         popupBuilder.setTitle("RENAMING PLAYLIST");
         popupBuilder.setMessage("Please enter the new name below.");
@@ -466,27 +445,12 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         popup.show();
     }
 
-
-    // Parameters: (View) Object which called this method.
-    // Description: Removes the working playlist from playData, closes screen.
-    public void deletePlaylist(View view) {
-
-        if (trackPlayer.isPlaying()) {
-            trackPlayer.togglePlaying();
-        }
-
-        PlayData.playData.removePlaylist(playlist);
-        FileManager.savePlayData(PlayData.playData);
-
-        // refresh
-//        MainActivity.
-        finish();
-    }
-
     // ==================================
     // == QUEUE MANAGEMENT METHODS ======
     // ==================================
 
+    // Parameters: (View) view.w
+    // Description: Starts playing quque (based on the status of shuffle).
     public void playQueue(View view) throws IOException {
         if (trackPlayer.isShuffle()) {
             trackPlayer.generateShuffleQueue(playlist);
@@ -497,6 +461,8 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         trackPlayer.startPlayingQueue(this);
     }
 
+    // Parameters: (View) view.
+    // Description: Button function to enable/disable queue looping.
     public void toggleLooping(View view) {
         trackPlayer.toggleQueueLooping();
         if (trackPlayer.isQueueLooping()) {
@@ -506,6 +472,8 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         }
     }
 
+    // Parameters: (View) view.
+    // Description: Button function to enable/disable shuffle.
     public void toggleShuffle(View view) {
         trackPlayer.toggleShuffle();
         if (trackPlayer.isShuffle()) {
