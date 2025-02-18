@@ -189,7 +189,8 @@
             android:src="@drawable/prev_track"
             android:background="@drawable/prev_track"
             android:scaleType="fitCenter"
-            /> <!-- Add margin to separate buttons -->
+
+            />
 
         <ImageButton
             android:id="@+id/togglePlaying"
@@ -211,7 +212,7 @@
             android:src="@drawable/next_track"
             android:background="@drawable/next_track"
             android:scaleType="fitCenter"
-            /> <!-- Add margin to separate buttons -->
+            />
 
     </LinearLayout>
 

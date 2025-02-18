@@ -2,20 +2,29 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
+
 import com.example.ics4u___embear.TrackOverListener;
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.PlayData;
 import com.example.ics4u___embear.data.Playlist;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.graphics.drawable.ColorDrawable;
+
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.data.Track;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+
 import android.provider.OpenableColumns;
+
 import androidx.core.view.WindowCompat;
+
 import com.example.ics4u___embear.R;
+
 import android.widget.LinearLayout;
 import android.widget.ImageButton;
 import android.graphics.Typeface;
@@ -27,7 +36,9 @@ import android.widget.EditText;
 import android.content.Intent;
 import android.view.Gravity;
 import android.widget.Toast;
+
 import java.io.IOException;
+
 import android.view.Window;
 import android.view.View;
 import android.os.Bundle;
@@ -222,17 +233,18 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                 try {
                     // Play the track
                     if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(finalTrackIndex)) {
+                        Log.d("except", "already playing, opening");
                         goToFullscreenTrackPlayer();
-                    }
-                    else {
+                    } else {
+                        Log.d("except", "play");
                         trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
                     }
 
                 } catch (IOException e) {
+                    Log.d("except", "ext");
                     e.printStackTrace();
                 }
             });
-
 
 
             // Create the delete CardView and button
@@ -304,10 +316,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: (View) Object which called this method.
     // Description: Opens (the currently playing track in) the fullscreen player.
     public void goToFullscreenTrackPlayer() {
-        if (trackPlayer.isPlaying()) {
-            Intent intent = new Intent(this, TrackActivity.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, TrackActivity.class);
+        startActivity(intent);
+
     }
 
     // Parameters: (View) Object which called this method.

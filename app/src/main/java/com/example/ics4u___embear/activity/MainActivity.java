@@ -21,6 +21,8 @@ import com.example.ics4u___embear.data.Track;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
+
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.graphics.Typeface;
 import android.widget.ImageView;
@@ -78,7 +80,9 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
     private void renderPlaylistButtons() {
 
         // initializes the container to store all the playlist information.
-        LinearLayout playlistContainer = findViewById(R.id.playlistContainer);
+        LinearLayout playlistContainer = findViewById(R.id.containerLayout);
+
+        // Remove everything inside.
         playlistContainer.removeAllViews();
 
         // Go through each playlist.

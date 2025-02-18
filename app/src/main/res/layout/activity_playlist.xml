@@ -167,6 +167,7 @@
             android:layout_height="50dp"
             android:layout_weight="0"
             android:background="@drawable/play_queue"
+            android:foreground="?attr/selectableItemBackground"
             android:onClick="playQueue"
             android:scaleType="centerCrop" />
 
@@ -192,6 +193,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@drawable/shuffle_false"
                 android:onClick="toggleShuffle"
+                android:foreground="?attr/selectableItemBackground"
                 android:scaleType="centerCrop" />
 
             <!-- Loop Button -->
@@ -202,6 +204,7 @@
                 android:layout_marginStart="4dp"
                 android:background="@drawable/looping_false"
                 android:onClick="toggleLooping"
+                android:foreground="?attr/selectableItemBackground"
                 android:scaleType="centerCrop" />
 
             <!-- Rename Button -->
@@ -211,6 +214,7 @@
                 android:layout_marginStart="4dp"
                 android:background="@drawable/rename"
                 android:onClick="renamePlaylist"
+                android:foreground="?attr/selectableItemBackground"
                 android:scaleType="centerCrop" />
 
         </LinearLayout>
