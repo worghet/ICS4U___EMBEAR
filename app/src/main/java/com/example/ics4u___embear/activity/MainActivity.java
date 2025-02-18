@@ -21,8 +21,6 @@ import com.example.ics4u___embear.data.Track;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
 import com.example.ics4u___embear.R;
-
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.graphics.Typeface;
 import android.widget.ImageView;
@@ -252,9 +250,25 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
 
             // Check if empty (TODO check if a playlist with the name exists)
             if (!newPlaylistName.isEmpty()) {
-                playData.addPlaylist(new Playlist(newPlaylistName));
-                FileManager.savePlayData(PlayData.playData);
-                renderPlaylistButtons();
+
+                boolean noMatchingName = true;
+                for (int playIndex = 0; playIndex < playData.getNumPlaylists(); playIndex++) {
+                    if (playData.getPlaylist(playIndex).getName().equals(newPlaylistName)) {
+                        noMatchingName = false;
+                        break;
+                    }
+                }
+               if (noMatchingName) {
+
+                   playData.addPlaylist(new Playlist(newPlaylistName));
+                   FileManager.savePlayData(PlayData.playData);
+                   renderPlaylistButtons();
+               }
+               else {
+                   Toast errorPopup = new Toast(this);
+                   errorPopup.setText("THAT NAME IS ALREADY IN USE");
+                   errorPopup.show();
+               }
             }
             else {
                 // Show an error message if something is wrong.

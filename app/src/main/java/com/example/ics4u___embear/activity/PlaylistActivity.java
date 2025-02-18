@@ -2,29 +2,20 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
-
 import com.example.ics4u___embear.TrackOverListener;
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.PlayData;
 import com.example.ics4u___embear.data.Playlist;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.drawable.ColorDrawable;
-
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.data.Track;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-
 import android.provider.OpenableColumns;
-
 import androidx.core.view.WindowCompat;
-
 import com.example.ics4u___embear.R;
-
 import android.widget.LinearLayout;
 import android.widget.ImageButton;
 import android.graphics.Typeface;
@@ -36,9 +27,7 @@ import android.widget.EditText;
 import android.content.Intent;
 import android.view.Gravity;
 import android.widget.Toast;
-
 import java.io.IOException;
-
 import android.view.Window;
 import android.view.View;
 import android.os.Bundle;
@@ -233,12 +222,11 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                 try {
                     // Play the track
                     if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(finalTrackIndex)) {
-                        Log.d("except", "already playing, opening");
                         goToFullscreenTrackPlayer();
                     } else {
-                        Log.d("except", "play");
                         trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
                     }
+                    renderPlaylistData();
 
                 } catch (IOException e) {
                     Log.d("except", "ext");
@@ -256,7 +244,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             deleteCardView.setRadius(10); // Rounded corners for the delete card
             deleteCardView.setUseCompatPadding(true); // Adds padding for shadow
 
-            // Inside the delete card, add the delete button
+
             // Inside the delete card, add the delete button
             ImageButton deleteButton = new ImageButton(this);
             deleteButton.setLayoutParams(new LinearLayout.LayoutParams(
@@ -264,9 +252,18 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                     LinearLayout.LayoutParams.MATCH_PARENT)
             );
 
-// Set the background color to 'pickled'
-//            if
-            deleteButton.setBackgroundColor(getResources().getColor(R.color.pickled));
+            // Show which track is playing; on reload this will change what is shown as green.
+            if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(trackIndex)) {
+                deleteCardView.setBackgroundColor(getResources().getColor(R.color.lynch));
+                trackCardView.setBackgroundColor(getResources().getColor(R.color.lynch));
+                deleteButton.setBackgroundColor(getResources().getColor(R.color.lynch));
+            } else {
+                trackCardView.setBackgroundColor(getResources().getColor(R.color.pickled));
+                deleteCardView.setBackgroundColor(getResources().getColor(R.color.pickled));
+                deleteButton.setBackgroundColor(getResources().getColor(R.color.pickled));
+
+            }
+
 //            deleteButton.setRadius
 
 // Set the delete image
@@ -288,7 +285,6 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
                 // Remove the specific track's CardView from the container
                 trackContainer.removeViewAt(carryableTrackIndex + 1);
-                // TODO use a tag system to delete the correct view
 
                 // Save the playlist data
                 FileManager.savePlayData(PlayData.playData);
@@ -470,6 +466,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         }
 
         trackPlayer.startPlayingQueue(this);
+        renderPlaylistData();
     }
 
     // Parameters: (View) view.
