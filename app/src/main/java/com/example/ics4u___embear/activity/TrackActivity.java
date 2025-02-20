@@ -13,12 +13,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.SeekBar;
+import java.io.IOException;
 import android.os.Handler;
 import android.os.Bundle;
 import android.view.View;
-
-
-import java.io.IOException;
 
 // == PLAYLIST SCREEN =============================================================
 public class TrackActivity extends AppCompatActivity implements TrackOverListener {
@@ -89,12 +87,16 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
     // Parameters: None.
     // Description: Sets the text views to the data of the currently playing track.
     private void renderTrackData() throws IOException {
+
+        // Set the track data (Name, Artist, Duration, Icon).
         trackNameView.setText(trackPlayer.getTrackPlaying().getTrackName());
         trackArtistNameView.setText(trackPlayer.getTrackPlaying().getArtistName());
         totalTimeBox.setText(Track.formatMilliseconds(trackPlayer.getTrackPlaying().getDurationInMilliseconds()));
-
         trackIconView.setImageBitmap(trackPlayer.getTrackPlaying().getIconFromMetadata(this));
 
+        // Check if the track is playing. Some of the cases this is needed for include:
+        // 1. The user skipped while paused,
+        // 2, Or they entered the activity when the song is paused.
         if (!trackPlayer.isPlaying()) {
             togglePlaying.setImageResource(R.drawable.play_track);
             togglePlaying.setBackgroundResource(R.drawable.play_track);
@@ -104,6 +106,7 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
             togglePlaying.setBackgroundResource(R.drawable.pause_track);
         }
 
+        // Get the bar to actually.. work.
         initializeSeekbar();
     }
 
@@ -135,29 +138,31 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
         Runnable updateRunnable = new Runnable() {
             @Override
             public void run() {
-                // Get the current position of the audio
+
+                // Get the current position of the audio.
                 int currentPosition = trackPlayer.getCurrentPosition();
 
-                // Update the SeekBar and the currentTimeBox every second
+                // Update the bar and text every second.
                 durationSeekbar.setProgress(currentPosition);
                 currentTimeBox.setText(Track.formatMilliseconds(currentPosition));
 
-                // Schedule the Runnable to run again in 1 second
+                // Schedule the runnable object to run again in 1 second.
                 handler.postDelayed(this, 1000);
             }
         };
 
-        // Start the periodic update when audio starts playing
+        // Start the "periodic" update when audio starts playing.
         handler.post(updateRunnable);
 
-        // Set the SeekBar listener to handle user interaction.
+        // Set the listener to handle user interaction.
         durationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // Update currentTimeBox when SeekBar progress changes.
+
+                // Update current time when the bar progress changes.
                 currentTimeBox.setText(Track.formatMilliseconds(progress));
 
-                // If the user is dragging the SeekBar, update the audio player's position.
+                // If the user is dragging the bar, update the audio's position.
                 if (fromUser) {
                     trackPlayer.seekTo(progress);
                 }

@@ -13,7 +13,6 @@ public class Playlist {
 
     private String name;
     private ArrayList<Track> allTracks;
-//    TODO private image icon
 
     // ==================================
     // == CONSTRUCTORS ==================

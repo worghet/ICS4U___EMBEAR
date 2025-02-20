@@ -9,18 +9,26 @@
 package com.example.ics4u___embear.activity;
 
 // == IMPORTS ======================================
+
 import com.example.ics4u___embear.TrackOverListener;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.ics4u___embear.SharedObjects;
 import com.example.ics4u___embear.data.Playlist;
 import com.example.ics4u___embear.data.PlayData;
+
 import android.graphics.drawable.ColorDrawable;
+
 import com.example.ics4u___embear.TrackPlayer;
 import com.example.ics4u___embear.FileManager;
 import com.example.ics4u___embear.data.Track;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.WindowCompat;
+
 import com.example.ics4u___embear.R;
+
 import android.widget.LinearLayout;
 import android.graphics.Typeface;
 import android.widget.ImageView;
@@ -32,7 +40,9 @@ import android.graphics.Color;
 import android.widget.Toast;
 import android.view.Gravity;
 import android.view.Window;
+
 import java.io.IOException;
+
 import android.view.View;
 import android.os.Bundle;
 
@@ -123,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             playlistDescriptionTextView.setTextColor(getResources().getColor(R.color.cadet));
             playlistDescriptionTextView.setTypeface(null, Typeface.BOLD);
 
+            // Add views to content layout.
             playlistContentLayout.addView(playlistNameTextView);
             playlistContentLayout.addView(playlistDescriptionTextView);
 
@@ -165,36 +176,38 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             playlistContainer.addView(playlistItemLayout);
         }
 
+        // Create add playlist button.
         LinearLayout addPlaylistLayout = new LinearLayout(this);
         addPlaylistLayout.setOrientation(LinearLayout.HORIZONTAL);
         addPlaylistLayout.setPadding(30, 30, 30, 30);
         addPlaylistLayout.setBackgroundColor(getResources().getColor(R.color.pickled));
         addPlaylistLayout.setGravity(Gravity.CENTER);
 
+        // Set the layout.
         LinearLayout.LayoutParams addParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         addParams.setMargins(0, 10, 0, 10);
         addPlaylistLayout.setLayoutParams(addParams);
 
-        // Create ImageView for the add button
+        // Create ImageView for the add button.
         ImageView addButton = new ImageView(this);
         addButton.setImageResource(R.drawable.add_track); // Ensure you have this drawable
 
-        // Set fixed size for the add icon
+        // Set fixed size for the add icon.
         LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
                 dpToPx(48), dpToPx(48)); // Adjust size as needed
         addButton.setLayoutParams(iconParams);
         addButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-        // Handle click to add a new playlist
+        // Add listener to add playlist button.
         addPlaylistLayout.setOnClickListener(view -> {
-            addPlaylistToPlayData(); // Replace with your actual method for adding playlists
+            addPlaylistToPlayData();
         });
 
-        // Add the button to the layout
+        // Add the button to the layout.
         addPlaylistLayout.addView(addButton);
 
-        // Add button to container
+        // Add button to container.
         playlistContainer.addView(addPlaylistLayout);
     }
 
@@ -248,9 +261,10 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             // Get the entered name.
             String newPlaylistName = inputLine.getText().toString().trim();
 
-            // Check if empty (TODO check if a playlist with the name exists)
+            // Check if the entered name isn't empty.
             if (!newPlaylistName.isEmpty()) {
 
+                // Check that a playlist with the same name doesn't exist.
                 boolean noMatchingName = true;
                 for (int playIndex = 0; playIndex < playData.getNumPlaylists(); playIndex++) {
                     if (playData.getPlaylist(playIndex).getName().equals(newPlaylistName)) {
@@ -258,18 +272,29 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
                         break;
                     }
                 }
-               if (noMatchingName) {
 
-                   playData.addPlaylist(new Playlist(newPlaylistName));
-                   FileManager.savePlayData(PlayData.playData);
-                   renderPlaylistButtons();
-               }
-               else {
-                   Toast errorPopup = new Toast(this);
-                   errorPopup.setText("THAT NAME IS ALREADY IN USE");
-                   errorPopup.show();
-               }
+                // If there is no playlist with the same name, make it.
+                if (noMatchingName) {
+
+                    // Add new playlist to playData.
+                    playData.addPlaylist(new Playlist(newPlaylistName));
+
+                    // Save the playdata object.
+                    FileManager.savePlayData(PlayData.playData);
+
+                    // Re-render the playlists to show the new playlist.
+                    renderPlaylistButtons();
+                }
+
+                // If the name is already used, show message.
+                else {
+                    Toast errorPopup = new Toast(this);
+                    errorPopup.setText("THAT NAME IS ALREADY IN USE");
+                    errorPopup.show();
+                }
             }
+
+            // If string entered is empty, show message.
             else {
                 // Show an error message if something is wrong.
                 Toast errorPopup = new Toast(this);
@@ -311,7 +336,8 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
             playData = new PlayData();
         }
 
-        PlayData.playData = playData; // TODO globalize ts
+        // Update global variable.
+        PlayData.playData = playData;
     }
 
     // =================================================================
@@ -326,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements TrackOverListener
         trackPlayer.togglePlaying();
 
         // Change the icon.
+
 //        view = (ImageButton) view;
 //        CHECK TAG
 //        ((ImageButton) view).setImageResource();

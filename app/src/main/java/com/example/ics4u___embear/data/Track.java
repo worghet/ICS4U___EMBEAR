@@ -1,18 +1,18 @@
 // == FILE PACKAGE ===============
 package com.example.ics4u___embear.data;
 
-// == IMPORTS ===================
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+// == IMPORTS ==============================
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
-import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
-
+import android.graphics.BitmapFactory;
 import com.example.ics4u___embear.R;
+import com.example.ics4u___embear.SharedObjects;
 
+import android.media.MediaPlayer;
+import android.graphics.Bitmap;
+import android.content.Context;
 import java.io.IOException;
+import android.util.Log;
+import android.net.Uri;
 
 // == TRACK ========
 public class Track {
@@ -22,7 +22,7 @@ public class Track {
     // ==================================
 
     private final String trackName, artistName;
-    private final int durationInMilliseconds; // Duration in milliseconds.
+    private final int durationInMilliseconds;
     private final String filePath;
 
     // ==================================
@@ -32,6 +32,8 @@ public class Track {
     public Track(String name, String filePath, Context context) {
         this.filePath = filePath;
         this.trackName = name;
+
+        // Context is required to deal with Uris and metadata access.
         this.durationInMilliseconds = calculatePlaytime(context);
         this.artistName = getArtistFromMetadata(context);
 
@@ -64,8 +66,12 @@ public class Track {
     // Parameters: (Context) context.
     // Description: Calculates the playtime of the track.
     private int calculatePlaytime(Context context) {
+
+        // Using a new mediaplayer because we don't want to disturb the source for the trackplayer.
         MediaPlayer durationCalculator = MediaPlayer.create(context, Uri.parse(filePath));
         int calculatedDuration = durationCalculator.getDuration();
+
+        // Close and return playtime.
         durationCalculator.release();
         return calculatedDuration;
     }
@@ -174,7 +180,6 @@ public class Track {
 
                 formattedText += minutes + ":";
 
-
             }
             else {
                 formattedText += minutes + ":";
@@ -183,14 +188,15 @@ public class Track {
         else {
             formattedText += "0:";
         }
+
+        // Add extra cushioning for readability.
         if (seconds < 10) {
             formattedText += "0";
         }
+
         formattedText += seconds;
 
         return formattedText;
-
-
 
     }
 }

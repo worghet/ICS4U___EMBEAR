@@ -2,8 +2,6 @@
 package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
