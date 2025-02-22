@@ -39,7 +39,6 @@ public class TrackPlayer extends MediaPlayer {
         isShuffle = false;
     }
 
-    // For interface implementation.
     public void addTrackOverListener(TrackOverListener trackOverListener) {
         allTrackOverListeners.add(trackOverListener);
     }
@@ -112,6 +111,7 @@ public class TrackPlayer extends MediaPlayer {
             // Set the progress to where it was paused.
             seekTo(timeProgress);
 
+
         }
     }
 
@@ -174,6 +174,7 @@ public class TrackPlayer extends MediaPlayer {
                 });
             }
         }
+
     }
 
     // Parameters: (Context) context.
@@ -236,6 +237,16 @@ public class TrackPlayer extends MediaPlayer {
 
         // Go through each index of the currently un-initialized queue.
         for (int queueIndex = 0; queueIndex < playlist.getNumberOfTracks(); queueIndex++) {
+
+//            Track randomTrack;
+//
+//            do {
+//                randomTrack = playlist.getAllTracks().get(random.nextInt(playlist.getNumTracks()));
+//
+//            } while (!Arrays.asList(queue).contains(randomTrack)));
+//
+//            queue[queueIndex] = randomTrack;
+
             while (true) {
                 Track randomTrack = playlist.getAllTracks().get(random.nextInt(playlist.getNumberOfTracks()));
                 if (!Arrays.asList(queue).contains(randomTrack)) {
@@ -260,7 +271,7 @@ public class TrackPlayer extends MediaPlayer {
         isShuffle = !isShuffle;
     }
 
-    // OTHER METHODS - NOT COMPLETE FOR THIS SUBMISSION
+    // OTHER METHODS --------------------------------------------------------
 
 //    public void initializeSeekbar(SeekBar durationSeekbar) {
 //        durationSeekbar.setMin(0);

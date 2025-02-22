@@ -70,19 +70,13 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         numberOfTracksView = findViewById(R.id.numberOfTracksView);
         playTimeView = findViewById(R.id.playTimeView);
 
-        // Initialize the loop button; set icon color depending on whether loop is on or off.
         loopToggleView = findViewById(R.id.loopToggler);
         if (trackPlayer.isQueueLooping()) {
-
-            // Naturally it is disabled (in xml file).
             loopToggleView.setBackgroundResource(R.drawable.looping_true);
         }
 
-        // Initialize the shuffle button; set color depending on whether shuffle is on or off.
         shuffleToggleView = findViewById(R.id.shuffleToggler);
         if (trackPlayer.isShuffle()) {
-
-            // Naturally it is disabled (in xml file).
             shuffleToggleView.setBackgroundResource(R.drawable.shuffle_true);
         }
 
@@ -134,175 +128,193 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         // Load the container with the tracks.
         for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
 
-            // Create the parent container for the track and delete card.
+            // Create the parent container for the track and delete card
             LinearLayout trackDeleteContainer = new LinearLayout(this);
             trackDeleteContainer.setOrientation(LinearLayout.HORIZONTAL);
-            trackDeleteContainer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            trackDeleteContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT)
+            );
+            trackDeleteContainer.setPadding(0, 40, 0, 0); // Adds spacing between cards
 
-            // Add padding / spacing between cards.
-            trackDeleteContainer.setPadding(0, 40, 0, 0);
-
-            // Create the CardView for the track.
+            // Create the CardView for the track
             CardView trackCardView = new CardView(this);
-            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(0, 200); // (width isn't actually 0; it just allows the layout to expand as much as it can).
-
-            // Add layout and set card weight.
-            cardLayoutParams.weight = 1;
+            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(
+                    0, // Set 0 width to allow it to expand and take up available space
+                    200 // height of the CardView
+            );
+            cardLayoutParams.weight = 1; // This ensures that the trackCard takes up the majority of the space
             trackCardView.setLayoutParams(cardLayoutParams);
 
-            // Add rounding and shadow.
-            trackCardView.setRadius(20);
-            trackCardView.setUseCompatPadding(true);
 
-            // Create a layout for the track info.
+            trackCardView.setCardBackgroundColor(getResources().getColor(R.color.pickled)); // Set background color
+
+
+            trackCardView.setRadius(20); // Rounded corners
+            trackCardView.setUseCompatPadding(true); // Adds padding for shadow
+
+            // Create the horizontal LinearLayout inside the track CardView
             LinearLayout trackLayout = new LinearLayout(this);
             trackLayout.setOrientation(LinearLayout.HORIZONTAL);
-            trackLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-
-            // Add padding.
+            trackLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
             trackLayout.setPadding(24, 0, 0, 0);
 
-            // Left container: track icon.
+            // Left container: track icon (ImageView)
             LinearLayout leftContainer = new LinearLayout(this);
-            leftContainer.setLayoutParams(new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.MATCH_PARENT));
-
-            // Add centering.
+            leftContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    100, // Slightly larger width for more space around the image
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
             leftContainer.setGravity(Gravity.CENTER);
 
-            // Add the track icon.
             ImageView trackImageView = new ImageView(this);
-            trackImageView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            trackImageView.setImageBitmap(playlist.getAllTracks().get(trackIndex).getIconFromMetadata(this));
+            trackImageView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT)
+            );
+            trackImageView.setImageBitmap(playlist.getAllTracks().get(trackIndex).getIconFromMetadata(this));  // Set a default icon (replace with track icon if available)
             trackImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             leftContainer.addView(trackImageView);
 
-            // Right container: track name, artist, and playtime.
+            // Right container: track name, artist, and playtime
             LinearLayout rightContainer = new LinearLayout(this);
-            rightContainer.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+            rightContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT, 1)
+            );
             rightContainer.setGravity(Gravity.CENTER_VERTICAL);
             rightContainer.setOrientation(LinearLayout.VERTICAL);
             rightContainer.setPadding(30, 0, 0, 0);
 
-            // Track name.
+            // Track Name TextView
             TextView trackNameTextView = new TextView(this);
             trackNameTextView.setText(playlist.getAllTracks().get(trackIndex).getTrackName());
             trackNameTextView.setTextColor(getResources().getColor(R.color.cadet));
-            trackNameTextView.setTextSize(14);
+            trackNameTextView.setTextSize(14); // Or use sp for scaling
             trackNameTextView.setTypeface(null, Typeface.BOLD);
 
-            // Artist and Playtime.
+            // Artist and Playtime TextView
             TextView trackInfoTextView = new TextView(this);
-            trackInfoTextView.setText(playlist.getAllTracks().get(trackIndex).getArtistName() + " | " + Track.formatMilliseconds(playlist.getAllTracks().get(trackIndex).getDurationInMilliseconds()));
+            trackInfoTextView.setText(
+                    playlist.getAllTracks().get(trackIndex).getArtistName() + " | " +
+                            Track.formatMilliseconds(playlist.getAllTracks().get(trackIndex).getDurationInMilliseconds()));
             trackInfoTextView.setTextColor(getResources().getColor(R.color.cadet));
-            trackInfoTextView.setTextSize(10);
+            trackInfoTextView.setTextSize(10); // Or use sp for scaling
             trackInfoTextView.setTypeface(null, Typeface.BOLD);
 
-            // Add the TextViews.
+            // Add TextViews to right container
             rightContainer.addView(trackNameTextView);
             rightContainer.addView(trackInfoTextView);
 
-            // Add the left and right containers to the trackLayout.
+            // Add the left and right containers to the trackLayout
             trackLayout.addView(leftContainer);
             trackLayout.addView(rightContainer);
 
-            // Add trackLayout to the trackCardView.
+            // Add trackLayout to the trackCardView
             trackCardView.addView(trackLayout);
 
-            // Make a listener for CardView to play track.
+            // Set OnClickListener for CardView to play the track
             int finalTrackIndex = trackIndex;
             trackCardView.setOnClickListener(view -> {
                 try {
-
-                    // Check if the user wants to go to fullscreen or just play the song.
-
-                    // If the track is already the one playing, then open that track in fullscreen.
+                    // Play the track
                     if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(finalTrackIndex)) {
                         goToFullscreenTrackPlayer();
-                    }
-
-                    // If the track is not the playing track (or is null), just play the selected song.
-                    else {
+                    } else {
                         trackPlayer.playTrack(this, playlist.getAllTracks().get(finalTrackIndex));
                     }
-
-                    // Reload the ui so that the track shows up as playing.
-                    // Note: if a playlist has many tracks, the loading / rendering process is very slow.
                     renderPlaylistData();
 
                 } catch (IOException e) {
+                    Log.d("except", "ext");
                     e.printStackTrace();
                 }
             });
 
 
-            // Create the delete track card.
+            // Create the delete CardView and button
             CardView deleteCardView = new CardView(this);
-            deleteCardView.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+            deleteCardView.setLayoutParams(new LinearLayout.LayoutParams(
+                    200, // Set both width and height to 100 to make the card square
+                    200 // Same as width to ensure it's square
+            ));
+            deleteCardView.setRadius(10); // Rounded corners for the delete card
+            deleteCardView.setUseCompatPadding(true); // Adds padding for shadow
 
-            // Add rounding / shadows (even if unnecessary).
-            deleteCardView.setRadius(10);
-            deleteCardView.setUseCompatPadding(true);
 
-
-            // Inside the delete card, add the delete button.
+            // Inside the delete card, add the delete button
             ImageButton deleteButton = new ImageButton(this);
-            deleteButton.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            deleteButton.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT)
+            );
 
             // Show which track is playing; on reload this will change what is shown as green.
             if (trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(trackIndex)) {
                 deleteCardView.setBackgroundColor(getResources().getColor(R.color.lynch));
                 trackCardView.setBackgroundColor(getResources().getColor(R.color.lynch));
                 deleteButton.setBackgroundColor(getResources().getColor(R.color.lynch));
-            }
-            else {
+            } else {
                 trackCardView.setBackgroundColor(getResources().getColor(R.color.pickled));
                 deleteCardView.setBackgroundColor(getResources().getColor(R.color.pickled));
                 deleteButton.setBackgroundColor(getResources().getColor(R.color.pickled));
+
             }
 
-            // Set the delete image.
+//            deleteButton.setRadius
+
+// Set the delete image
             deleteButton.setImageResource(R.drawable.delete);
 
-            // Make the image fit inside the button.
+// Make the image fit inside the button
             deleteButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-            // Set listener for the delete button.
+            // OnClickListener for the delete button
+            // OnClickListener for the delete button
             final int carryableTrackIndex = trackIndex;
             deleteButton.setOnClickListener(view -> {
-
-                // Pause the button before deleting it.
                 if (trackPlayer.isPlaying() && trackPlayer.getTrackPlaying() == playlist.getAllTracks().get(carryableTrackIndex)) {
                     trackPlayer.togglePlaying();
                 }
 
-                // Remove the track from the playlist.
+                // Remove the track from the playlist
                 playlist.removeTrack(playlist.getAllTracks().get(carryableTrackIndex));
 
-                // Save the playlist data.
+                // Remove the specific track's CardView from the container
+                trackContainer.removeViewAt(carryableTrackIndex + 1);
+
+                // Save the playlist data
                 FileManager.savePlayData(PlayData.playData);
 
-                // Re-render playlist data.
-                renderPlaylistData();
+                // Optionally, if you want to update the remaining track views
+                renderPlaylistData(); // Or re-render selectively if necessary
             });
 
-            // Add delete button to view.
-            deleteCardView.addView(deleteButton);
-            deleteCardView.setRadius(25);
+            deleteCardView.addView(deleteButton); // Add delete button to the delete card
+            deleteCardView.setRadius(25); // Rounded corners for the delete card
+
 
             // Add the delete card to the parent container
             trackDeleteContainer.addView(trackCardView);
-            trackDeleteContainer.addView(deleteCardView);
+            trackDeleteContainer.addView(deleteCardView); // Add the delete button card to the same container
+
 
             // Add the trackDeleteContainer to the trackContainer
             trackContainer.addView(trackDeleteContainer);
+
         }
     }
+
 
     // Parameters: (View) Object which called this method.
     // Description: Opens (the currently playing track in) the fullscreen player.
     public void goToFullscreenTrackPlayer() {
         Intent intent = new Intent(this, TrackActivity.class);
         startActivity(intent);
+
     }
 
     // Parameters: (View) Object which called this method.
@@ -315,109 +327,79 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // == FUNCTIONALITY METHODS =========
     // ==================================
 
-    // Parameters:  (View) view.
+    // WRITTEN BY CHATGPT.
     // Description: Opens the menu for selecting audio files.
     public void addAudioFile(View view) {
-
-        // Create an intent which opens the file picker.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-
-        // Tells the file ui to only show audio files.
         intent.setType("audio/*");
-
-        // Tells the file ui to only show audio files that are tangible (so no hidden or virtual files).
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Allows the user to select multiple files at once.
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-        // Starts the intent / opens the screen.
         startActivityForResult(intent, REQUEST_AUDIO_PICK);
     }
 
-    // Parameters: (int) requestCode: intent identifier | (int) resultCode: either CANCELLED, or OK | (Intent) data: the Uris of the selected files.
+    // MOSTLY WRITTEN BY CHATGPT.
     // Description: Processes the file selected in addAudioFile().
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        // Create basic logic using parent to process.
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Check that everything went through fine.
         if (requestCode == REQUEST_AUDIO_PICK && resultCode == RESULT_OK && data != null) {
-
-            // Check if multiple files were selected (getClipData).
+            // Check if multiple files were selected
             if (data.getClipData() != null) {
 
-                // Go through all data selected.
+                // Multiple files selected
                 int count = data.getClipData().getItemCount();
-                for (int trackIndex = 0; trackIndex < count; trackIndex++) {
+                for (int i = 0; i < count; i++) {
+                    Uri trackUri = data.getClipData().getItemAt(i).getUri(); // Get each URI
 
-                    // Get the uri from the data.
-                    Uri trackUri = data.getClipData().getItemAt(trackIndex).getUri();
-
-                    // Grant the app long term permission (persist permission).
+                    // Persist permission to access the file
                     getContentResolver().takePersistableUriPermission(trackUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                    // Get file name from URI.
+                    // Extract file name from URI
                     String fileName = getFileNameFromUri(trackUri);
 
-                    // Create Track object and add to playlist.
+                    // Create Audio object and add to playlist
                     Track trackToAdd = new Track(fileName, trackUri.toString(), this);
                     playlist.addTrack(trackToAdd);
                 }
-            }
-            // Check if data is single object (getData).
-            else if (data.getData() != null) {
+            } else if (data.getData() != null) {
 
-                // Get track Uri.
-                Uri trackUri = data.getData();
 
-                // Get long term file access.
+                // Single file selected
+                Uri trackUri = data.getData(); // Get the selected file URI
+
+                // Persist permission to access the file
                 getContentResolver().takePersistableUriPermission(trackUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                // Extract file name from URI.
+                // Extract file name from URI
                 String fileName = getFileNameFromUri(trackUri);
 
-                // Create Track object and add to playlist.
+                // Create Audio object and add to playlist
                 Track trackToAdd = new Track(fileName, trackUri.toString(), this);
+
                 playlist.addTrack(trackToAdd);
             }
 
-            // Update playData to include selected files.
-            FileManager.savePlayData(PlayData.playData);
+            // Update playData, refresh UI.
 
-            // Load ui for new selected tracks.
+            FileManager.savePlayData(PlayData.playData);
+            Log.d("saved", "saved");
+
             renderPlaylistData();
         }
     }
 
-    // Parameters: (Uri) file uri. (ex. content://media/external/audio/media/something)
+    // MOSTLY WRITTEN BY CHATGPT.
     // Description: Gets the file name through uri.
     private String getFileNameFromUri(Uri uri) {
-
-        // The uri does not have the file name on its own; it holds the metadata that has the file name.
-        // This cursor object is used to access that name.
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-
-        // Check that the process of accessing metadata went through, then try moving the results to the first row (returns 1 if successful).
         if (cursor != null && cursor.moveToFirst()) {
-
-            // Get the display name from the data.
             int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-
-            // Set it to string.
             String fileName = cursor.getString(nameIndex);
-
-            // Close the cursor.
             cursor.close();
-
-            // Get a substring without the file extension and return.
             fileName = fileName.substring(0, fileName.indexOf('.'));
             return fileName;
         }
-
-        // If something goes wrong in the search, return Unknown File.
         return "Unknown File";
     }
 
@@ -428,31 +410,28 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: (View) Object which called this method.
     // Description: Opens a popup, then renames the working playlist.
     public void renamePlaylist(View view) {
-
-        // This popup is pretty much the exact same as the new playlist popup in main activity, so im not commenting it.
-
         EditText inputLine = new EditText(this);
         inputLine.setHint("Enter new playlist name");
+
         inputLine.setHintTextColor(getResources().getColor(R.color.cadet));
+
         inputLine.setPadding(70, 0, 0, 30);
-        inputLine.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+
+        inputLine.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);  // Example: Set text size in sp
 
         AlertDialog.Builder popupBuilder = new AlertDialog.Builder(this);
         popupBuilder.setTitle("RENAMING PLAYLIST");
         popupBuilder.setMessage("Please enter the new name below.");
-        popupBuilder.setView(inputLine);
+        popupBuilder.setView(inputLine); // Set the EditText as the view
 
         popupBuilder.setPositiveButton("ADD", ((dialog, which) -> {
             String newPlaylistName = inputLine.getText().toString().trim();
 
             if (!newPlaylistName.isEmpty()) {
-
-                // TODO check that playlist with that name doesnt exist.
                 playlist.setName(newPlaylistName);
                 FileManager.savePlayData(PlayData.playData);
                 renderPlaylistData();
-            }
-            else {
+            } else {
                 Toast errorPopup = new Toast(this);
                 errorPopup.setText("EMPTY NAME GIVEN");
                 errorPopup.show();
@@ -460,8 +439,10 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         }));
 
         popupBuilder.setNegativeButton("CANCEL", null);
+
         AlertDialog popup = popupBuilder.create();
 
+        // Set the background color for the popup (dialog)
         Window window = popup.getWindow();
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.cadet)));
@@ -476,36 +457,25 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // ==================================
 
     // Parameters: (View) view.w
-    // Description: Starts playing queue (based on the status of shuffle).
+    // Description: Starts playing quque (based on the status of shuffle).
     public void playQueue(View view) throws IOException {
-
-        // Generate playlist queue based of shuffle status.
         if (trackPlayer.isShuffle()) {
             trackPlayer.generateShuffleQueue(playlist);
-        }
-        else {
+        } else {
             trackPlayer.generateIndexQueue(playlist);
         }
 
-        // Start the queue.
         trackPlayer.startPlayingQueue(this);
-
-        // Reload ui to show the current song playing.
         renderPlaylistData();
     }
 
     // Parameters: (View) view.
     // Description: Button function to enable/disable queue looping.
     public void toggleLooping(View view) {
-
-        // Toggle looping.
         trackPlayer.toggleQueueLooping();
-
-        // Change icon.
         if (trackPlayer.isQueueLooping()) {
             loopToggleView.setBackgroundResource(R.drawable.looping_true);
-        }
-        else {
+        } else {
             loopToggleView.setBackgroundResource(R.drawable.looping_false);
         }
     }
@@ -513,22 +483,17 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
     // Parameters: (View) view.
     // Description: Button function to enable/disable shuffle.
     public void toggleShuffle(View view) {
-
-        // Toggle shuffle.
         trackPlayer.toggleShuffle();
-
-        // Change icon.
         if (trackPlayer.isShuffle()) {
             shuffleToggleView.setBackgroundResource(R.drawable.shuffle_true);
-        }
-        else {
+        } else {
             shuffleToggleView.setBackgroundResource(R.drawable.shuffle_false);
         }
     }
 
-    // =================================================================
-    // == TRACKPLAYER METHODS (NOT COMPLETE FOR THE PROJECT) ===========
-    // =================================================================
+    // ==================================
+    // == TRACKPLAYER METHODS ===========
+    // ==================================
 
     // Parameters: (View) Object which called this method.
     // Description: Toggles the playing of the track.
@@ -556,9 +521,9 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
     }
 
-    // =================================================================
-    // == UPDATER METHODS (NOT COMPLETE FOR THE PROJECT) ===============
-    // =================================================================
+    // ==================================
+    // == BACKGROUND UPDATER METHODS ====
+    // ==================================
 
     // Parameters: None.
     // Description: Will perform an action when it receives a "end track" signal from the trackPlayer.

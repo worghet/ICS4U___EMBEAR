@@ -46,6 +46,7 @@ public class TrackActivity extends AppCompatActivity implements TrackOverListene
 
         // Initialize the modifiable views.
         trackNameView = findViewById(R.id.trackNameView);
+        trackNameView.setSelected(true);
         trackArtistNameView = findViewById(R.id.artistNameView);
         trackIconView = findViewById(R.id.trackIconView);
         totalTimeBox = findViewById(R.id.totalTime);
