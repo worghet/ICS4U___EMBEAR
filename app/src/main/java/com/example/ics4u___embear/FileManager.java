@@ -4,6 +4,8 @@ package com.example.ics4u___embear;
 // == IMPORTS ==================================
 import com.example.ics4u___embear.data.PlayData;
 import com.google.gson.Gson;
+
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import android.util.Log;
@@ -62,6 +64,22 @@ public class FileManager {
         // Catch any dropped exceptions.
         try {
 
+            try (FileReader reader = new FileReader(PLAYDATA_FILE);
+                 BufferedReader br = new BufferedReader(reader) ) {
+
+                // fromJson(FileReader (To read file), Class (Object Blueprints)) method.
+                // -------------------------------------------------------------
+                // 1. Read file (if syntax is JSON, it's fine as a text file).
+                // 2. Parse and build a PlayData object.
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    Log.d("INFO", ">>" + line);
+                }
+
+
+            }
+
             // Try with resources; read from the file.
             try (FileReader reader = new FileReader(PLAYDATA_FILE)) {
 
@@ -69,6 +87,7 @@ public class FileManager {
                 // -------------------------------------------------------------
                 // 1. Read file (if syntax is JSON, it's fine as a text file).
                 // 2. Parse and build a PlayData object.
+
                 return gson.fromJson(reader, PlayData.class);
 
             }

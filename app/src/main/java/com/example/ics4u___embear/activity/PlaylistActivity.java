@@ -25,6 +25,8 @@ import androidx.core.view.WindowCompat;
 
 import com.example.ics4u___embear.R;
 
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.ImageButton;
 import android.graphics.Typeface;
@@ -131,9 +133,14 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             trackContainer.removeViewAt(i);  // Remove view at index i
         }
 
+
+        Log.d("as", "starting loading!");
+
         // Load the container with the tracks.
         for (int trackIndex = 0; trackIndex < playlist.getNumberOfTracks(); trackIndex++) {
-            trackContainer.addView(buildTrackContainer(playlist.getAllTracks().get(trackIndex)));
+            View sunView = buildTrackContainer(playlist.getAllTracks().get(trackIndex));
+            trackContainer.addView(sunView);
+
         }
     }
 
@@ -270,6 +277,8 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             }
 
             // Remove the track from the playlist
+            removeTrackView(track);
+            Log.d("rem", "track removed");
             playlist.removeTrack(track);
 
             // Remove the specific track's CardView from the container
@@ -277,9 +286,10 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
 
             // Save the playlist data
             FileManager.savePlayData(PlayData.playData);
+            reloadPlaylistInfo();
 
             // Optionally, if you want to update the remaining track views
-            renderPlaylistData(); // Or re-render selectively if necessary
+
         });
 
         deleteButton.setTag("delete-button");
@@ -297,6 +307,16 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         trackDeleteContainer.setTag(track);
         //retun
         return trackDeleteContainer;
+
+    }
+
+    private void reloadPlaylistInfo() {
+        // Display the number of tracks in playlist, and the total time of the playlist.
+        numberOfTracksView.setText(playlist.getNumberOfTracks() + " TRACKS");
+        playTimeView.setText(Track.formatMilliseconds(playlist.getPlaylistPlayTime()));
+
+        // Display the playlist name.
+        playlistNameView.setText(playlist.getName());
 
     }
 
@@ -327,14 +347,34 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
         }
     }
 
-
-
     // Parameters: (View) Object which called this method.
     // Description: Opens (the currently playing track in) the fullscreen player.
     public void goToFullscreenTrackPlayer() {
         Intent intent = new Intent(this, TrackActivity.class);
         startActivity(intent);
 
+    }
+
+    private void removeTrackView(Track track) {
+        LinearLayout linearLayout = findViewById(R.id.audioContainerLayout);
+        int childCount = linearLayout.getChildCount();
+
+        for (int i = 1; i < childCount; i++) {
+            View trackDeleteContainer = linearLayout.getChildAt(i);
+            Track hello = (Track) trackDeleteContainer.getTag();  // Get the stored track reference
+
+            if (hello == track) {
+                linearLayout.removeView(linearLayout.getChildAt(i));
+                Log.d("rve", "REMOVED!!");
+                break;
+            }
+
+        }
+    }
+
+    private void addTrackView(Track track) {
+        LinearLayout linearLayout = findViewById(R.id.audioContainerLayout);
+        linearLayout.addView(buildTrackContainer(track));
     }
 
     // Parameters: (View) Object which called this method.
@@ -381,6 +421,7 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                     // Create Audio object and add to playlist
                     Track trackToAdd = new Track(fileName, trackUri.toString(), this);
                     playlist.addTrack(trackToAdd);
+                    addTrackView(trackToAdd);
                 }
             } else if (data.getData() != null) {
 
@@ -398,6 +439,8 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
                 Track trackToAdd = new Track(fileName, trackUri.toString(), this);
 
                 playlist.addTrack(trackToAdd);
+                addTrackView(trackToAdd);
+
             }
 
             // Update playData, refresh UI.
@@ -405,7 +448,8 @@ public class PlaylistActivity extends AppCompatActivity implements TrackOverList
             FileManager.savePlayData(PlayData.playData);
             Log.d("saved", "saved");
 
-            renderPlaylistData();
+            reloadPlaylistInfo();
+
         }
     }
 

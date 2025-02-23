@@ -2,7 +2,10 @@
 package com.example.ics4u___embear.data;
 
 // == IMPORTS =============
+import android.view.View;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // == PLAYLIST ========
 public class Playlist {
